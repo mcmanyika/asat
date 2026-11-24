@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ContentDetail } from "@/components/shared/ContentDetail";
+import { DetailPageFallback } from "@/components/shared/DetailPageFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { getSystemBySlug, systems } from "@/data/systems";
 import { breadcrumbJsonLd, buildMetadata, serviceJsonLd } from "@/lib/seo";
@@ -24,7 +26,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function SystemDetailPage({
+async function SystemDetail({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -63,5 +65,17 @@ export default async function SystemDetailPage({
         secondaryCta={{ href: "/contact", label: "Talk to an Expert" }}
       />
     </>
+  );
+}
+
+export default function SystemDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  return (
+    <Suspense fallback={<DetailPageFallback />}>
+      <SystemDetail params={params} />
+    </Suspense>
   );
 }

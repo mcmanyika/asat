@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import { Container } from "@/components/shared/Container";
 import {
   FacebookIcon,
@@ -26,11 +26,7 @@ export function Footer() {
   const contact = getConfiguredContactFields();
   const socialLinks = getConfiguredSocialLinks();
   const hasContact =
-    contact.address ||
-    contact.phone ||
-    contact.email ||
-    contact.whatsapp ||
-    contact.businessHours;
+    contact.address || contact.phone || contact.businessHours;
 
   return (
     <footer className="bg-navy text-white">
@@ -44,10 +40,6 @@ export function Footer() {
               height={48}
               className="mb-4 h-10 w-auto object-contain"
             />
-            <p className="text-sm leading-relaxed text-slate-300">
-              {siteConfig.tagline} Enterprise technology products, business
-              systems, IT infrastructure and professional consulting services.
-            </p>
             {socialLinks.length > 0 ? (
               <div className="mt-5 flex items-center gap-3">
                 {socialLinks.map(([key, url]) => {
@@ -136,20 +128,6 @@ export function Footer() {
                       {contact.phone}
                     </a>
                   </li>
-                ) : null}
-                {contact.email ? (
-                  <li>
-                    <a
-                      href={`mailto:${contact.email}`}
-                      className="inline-flex items-center gap-2 hover:text-white"
-                    >
-                      <Mail className="size-4" aria-hidden />
-                      {contact.email}
-                    </a>
-                  </li>
-                ) : null}
-                {contact.whatsapp ? (
-                  <li className="text-slate-300">WhatsApp: {contact.whatsapp}</li>
                 ) : null}
                 {contact.businessHours ? (
                   <li className="text-slate-300">{contact.businessHours}</li>

@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/shared/Container";
+import { DetailPageFallback } from "@/components/shared/DetailPageFallback";
 import { PageHero } from "@/components/shared/PageHero";
 import { CTASection } from "@/components/shared/CTASection";
 import { JsonLd } from "@/components/shared/JsonLd";
@@ -33,7 +35,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function IndustryDetailPage({
+async function IndustryDetail({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -146,5 +148,17 @@ export default async function IndustryDetailPage({
       </section>
       <CTASection />
     </>
+  );
+}
+
+export default function IndustryDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  return (
+    <Suspense fallback={<DetailPageFallback />}>
+      <IndustryDetail params={params} />
+    </Suspense>
   );
 }

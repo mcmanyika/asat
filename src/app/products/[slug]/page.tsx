@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ContentDetail } from "@/components/shared/ContentDetail";
+import { DetailPageFallback } from "@/components/shared/DetailPageFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { getProductBySlug, products } from "@/data/products";
 import { breadcrumbJsonLd, buildMetadata, serviceJsonLd } from "@/lib/seo";
@@ -24,7 +26,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function ProductDetailPage({
+async function ProductDetail({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -63,5 +65,17 @@ export default async function ProductDetailPage({
         imageFit="contain"
       />
     </>
+  );
+}
+
+export default function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  return (
+    <Suspense fallback={<DetailPageFallback />}>
+      <ProductDetail params={params} />
+    </Suspense>
   );
 }

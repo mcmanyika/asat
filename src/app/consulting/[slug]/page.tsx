@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ContentDetail } from "@/components/shared/ContentDetail";
+import { DetailPageFallback } from "@/components/shared/DetailPageFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { consultingServices, getConsultingBySlug } from "@/data/consulting";
 import { breadcrumbJsonLd, buildMetadata, serviceJsonLd } from "@/lib/seo";
@@ -24,7 +26,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function ConsultingDetailPage({
+async function ConsultingDetail({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -62,5 +64,17 @@ export default async function ConsultingDetailPage({
         }}
       />
     </>
+  );
+}
+
+export default function ConsultingDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  return (
+    <Suspense fallback={<DetailPageFallback />}>
+      <ConsultingDetail params={params} />
+    </Suspense>
   );
 }
