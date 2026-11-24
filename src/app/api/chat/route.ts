@@ -7,8 +7,6 @@ import {
 } from "@/lib/chat/enquiry-tool";
 import { saveEnquiry } from "@/lib/supabase/enquiries";
 
-export const runtime = "nodejs";
-
 const messageSchema = z.object({
   role: z.enum(["user", "assistant"]),
   content: z.string().trim().min(1).max(4000),

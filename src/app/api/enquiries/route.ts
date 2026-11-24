@@ -2,8 +2,6 @@ import { enquirySchema } from "@/lib/validations/enquiry";
 import { saveEnquiry } from "@/lib/supabase/enquiries";
 import { z } from "zod";
 
-export const runtime = "nodejs";
-
 const requestSchema = enquirySchema.extend({
   type: z.enum(["contact", "quote", "demo", "consultation"]),
 });
