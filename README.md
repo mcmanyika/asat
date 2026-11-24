@@ -36,7 +36,8 @@ npm run lint
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY` (server-only, recommended)
-4. Run `supabase/schema.sql` in the Supabase SQL Editor to create the `enquiries` table and RLS policies.
+4. Run `supabase/schema.sql` in the Supabase SQL Editor to create the `enquiries` table, grants and RLS policies.
+   If inserts fail with “permission denied”, also run `supabase/fix-grants.sql`.
 5. Add verified contact and social details in `src/config/site.ts`.
 
 Empty contact and social fields are hidden automatically. WhatsApp is hidden until a number is configured.

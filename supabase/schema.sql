@@ -39,6 +39,11 @@ create index if not exists enquiries_status_idx
 
 alter table public.enquiries enable row level security;
 
+-- Table privileges required for PostgREST / API keys
+grant usage on schema public to anon, authenticated, service_role;
+grant insert on table public.enquiries to anon, authenticated, service_role;
+grant select, update, delete on table public.enquiries to service_role;
+
 -- Public website can create enquiries only.
 drop policy if exists "Public can insert enquiries" on public.enquiries;
 create policy "Public can insert enquiries"
@@ -47,7 +52,14 @@ create policy "Public can insert enquiries"
   to anon, authenticated
   with check (true);
 
--- No public read/update/delete. Use the service role in the dashboard/API for admin access.
+-- Service role bypasses RLS, but keep an explicit policy for clarity if needed later.
+drop policy if exists "Service role full access" on public.enquiries;
+create policy "Service role full access"
+  on public.enquiries
+  for all
+  to service_role
+  using (true)
+  with check (true);
 
 comment on table public.enquiries is
-  'Website enquiry submissions from contact, quote, demo and consultation forms.';
+  'Website enquiry submissions from contact, quote, demo, consultation forms and chatbot.';

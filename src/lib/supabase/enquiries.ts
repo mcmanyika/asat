@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import {
   createSupabaseServerClient,
   type EnquiryInsert,
@@ -14,31 +15,42 @@ export async function saveEnquiry(input: EnquiryInsert) {
     };
   }
 
-  const { data, error } = await supabase
-    .from("enquiries")
-    .insert({
-      type: input.type,
-      full_name: input.full_name,
-      company_name: input.company_name,
-      email: input.email,
-      telephone: input.telephone,
-      interest: input.interest,
-      subject: input.subject,
-      message: input.message,
-      privacy_consent: input.privacy_consent,
-      source: input.source || "website",
-    })
-    .select("id")
-    .single();
+  // Pre-generate id so we don't need SELECT after INSERT (anon RLS is insert-only).
+  const id = randomUUID();
+
+  const { error } = await supabase.from("enquiries").insert({
+    id,
+    type: input.type,
+    full_name: input.full_name,
+    company_name: input.company_name,
+    email: input.email,
+    telephone: input.telephone,
+    interest: input.interest,
+    subject: input.subject,
+    message: input.message,
+    privacy_consent: input.privacy_consent,
+    source: input.source || "website",
+  });
 
   if (error) {
-    console.error("Supabase enquiry insert failed:", error);
+    console.error("Supabase enquiry insert failed:", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+
+    const permissionDenied =
+      error.code === "42501" ||
+      error.message.toLowerCase().includes("permission denied");
+
     return {
       ok: false as const,
-      error:
-        "Unable to save the enquiry right now. Please try again or use the contact form.",
+      error: permissionDenied
+        ? "Database permissions are missing. Run supabase/fix-grants.sql in the Supabase SQL Editor, then try again."
+        : "Unable to save the enquiry right now. Please try again or use the contact form.",
     };
   }
 
-  return { ok: true as const, id: data.id as string };
+  return { ok: true as const, id };
 }
