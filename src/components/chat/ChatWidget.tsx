@@ -11,6 +11,7 @@ import {
 import { usePathname } from "next/navigation";
 import { Bot, MessageCircle, Send, X } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { OPEN_CHAT_EVENT } from "@/lib/chat/open-chat";
 import { getWhatsAppHref } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +40,15 @@ export function ChatWidget() {
   const [feedbackSaved, setFeedbackSaved] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    function handleOpenChat() {
+      setOpen(true);
+    }
+
+    window.addEventListener(OPEN_CHAT_EVENT, handleOpenChat);
+    return () => window.removeEventListener(OPEN_CHAT_EVENT, handleOpenChat);
+  }, []);
 
   useEffect(() => {
     if (!open) return;

@@ -10,6 +10,7 @@ import {
 import { useRef } from "react";
 import { Container } from "@/components/shared/Container";
 import { ButtonLink } from "@/components/shared/ButtonLink";
+import { OpenChatButton } from "@/components/shared/OpenChatButton";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -93,9 +94,9 @@ export function HeroSection() {
               <ButtonLink href="/#solutions" size="lg">
                 Explore Our Solutions
               </ButtonLink>
-              <ButtonLink href="/contact" variant="secondary" size="lg">
+              <OpenChatButton variant="secondary" size="lg">
                 Talk to an Expert
-              </ButtonLink>
+              </OpenChatButton>
             </div>
           </motion.div>
         </motion.div>

@@ -62,7 +62,7 @@ async function SystemDetail({
           href: `/request-demo?interest=business-systems&subject=${encodeURIComponent(system.name)}`,
           label: "Request a Demo",
         }}
-        secondaryCta={{ href: "/contact", label: "Talk to an Expert" }}
+        secondaryCta={{ action: "open-chat", label: "Talk to an Expert" }}
       />
     </>
   );
