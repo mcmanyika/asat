@@ -89,13 +89,6 @@ export function HeroSection() {
               Through Technology.
             </h1>
 
-            <p className="mt-5 max-w-lg text-base leading-relaxed text-slate-100/95 drop-shadow-[0_1px_10px_rgba(11,22,40,0.45)] sm:text-lg">
-              ASAT Technologies delivers innovative business systems, reliable
-              technology products, secure IT infrastructure and expert consulting
-              services designed to drive operational excellence and sustainable
-              business growth.
-            </p>
-
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <ButtonLink href="/#solutions" size="lg">
                 Explore Our Solutions

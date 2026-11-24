@@ -14,6 +14,16 @@ export type EnquiryInsert = {
   source?: string;
 };
 
+export type FeedbackInsert = {
+  category: "website" | "product" | "service" | "chat" | "general";
+  rating: number | null;
+  full_name: string | null;
+  email: string | null;
+  message: string;
+  privacy_consent: boolean;
+  source?: string;
+};
+
 export function createSupabaseServerClient(): SupabaseClient | null {
   const config = getSupabasePublicConfig();
   if (!config) return null;

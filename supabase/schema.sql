@@ -63,3 +63,49 @@ create policy "Service role full access"
 
 comment on table public.enquiries is
   'Website enquiry submissions from contact, quote, demo, consultation forms and chatbot.';
+
+create table if not exists public.feedback (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  category text not null default 'general' check (
+    category in ('website', 'product', 'service', 'chat', 'general')
+  ),
+  rating integer check (rating is null or (rating >= 1 and rating <= 5)),
+  full_name text,
+  email text,
+  message text not null,
+  privacy_consent boolean not null default false,
+  status text not null default 'new' check (
+    status in ('new', 'reviewed', 'closed')
+  ),
+  source text not null default 'chatbot'
+);
+
+create index if not exists feedback_created_at_idx
+  on public.feedback (created_at desc);
+
+create index if not exists feedback_status_idx
+  on public.feedback (status);
+
+alter table public.feedback enable row level security;
+
+grant insert on table public.feedback to anon, authenticated, service_role;
+grant select, update, delete on table public.feedback to service_role;
+
+drop policy if exists "Public can insert feedback" on public.feedback;
+create policy "Public can insert feedback"
+  on public.feedback
+  for insert
+  to anon, authenticated
+  with check (true);
+
+drop policy if exists "Service role full access feedback" on public.feedback;
+create policy "Service role full access feedback"
+  on public.feedback
+  for all
+  to service_role
+  using (true)
+  with check (true);
+
+comment on table public.feedback is
+  'Website and chatbot feedback submissions from visitors.';

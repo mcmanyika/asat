@@ -2,46 +2,24 @@
 
 import { MessageCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { getConfiguredContactFields, siteConfig } from "@/config/site";
-import { products } from "@/data/products";
-import { systems } from "@/data/systems";
-import { solutions } from "@/data/solutions";
-import { consultingServices } from "@/data/consulting";
+import { getWhatsAppHref } from "@/lib/whatsapp";
+import { cn } from "@/lib/utils";
 
-function buildMessage(pathname: string) {
-  const product = products.find((item) => item.href === pathname);
-  if (product) {
-    return `Hello ${siteConfig.name}, I would like to enquire about your ${product.name} solutions.`;
-  }
+type WhatsAppButtonProps = {
+  className?: string;
+  compact?: boolean;
+  label?: string;
+};
 
-  const system = systems.find((item) => item.href === pathname);
-  if (system) {
-    return `Hello ${siteConfig.name}, I would like to enquire about ${system.name}.`;
-  }
-
-  const solution = solutions.find((item) => item.href === pathname);
-  if (solution) {
-    return `Hello ${siteConfig.name}, I would like to enquire about your ${solution.name}.`;
-  }
-
-  const consulting = consultingServices.find((item) => item.href === pathname);
-  if (consulting) {
-    return `Hello ${siteConfig.name}, I would like to enquire about ${consulting.name}.`;
-  }
-
-  return `Hello ${siteConfig.name}, I would like to enquire about your business technology solutions.`;
-}
-
-export function WhatsAppButton() {
+export function WhatsAppButton({
+  className,
+  compact = false,
+  label = "WhatsApp",
+}: WhatsAppButtonProps) {
   const pathname = usePathname();
-  const { whatsapp } = getConfiguredContactFields();
+  const href = getWhatsAppHref(pathname);
 
-  if (!whatsapp) return null;
-
-  const digits = whatsapp.replace(/\D/g, "");
-  if (!digits) return null;
-
-  const href = `https://wa.me/${digits}?text=${encodeURIComponent(buildMessage(pathname))}`;
+  if (!href) return null;
 
   return (
     <a
@@ -49,10 +27,14 @@ export function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
-      className="fixed right-4 bottom-20 z-50 inline-flex items-center gap-2 rounded-[4px] bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-[#1ebe57] md:right-6 md:bottom-24"
+      className={cn(
+        "inline-flex items-center justify-center gap-2 rounded-[4px] bg-[#25D366] text-sm font-semibold text-white transition hover:bg-[#1ebe57]",
+        compact ? "size-8" : "h-10 px-3",
+        className,
+      )}
     >
-      <MessageCircle className="size-5" aria-hidden />
-      <span className="hidden sm:inline">WhatsApp</span>
+      <MessageCircle className="size-4 shrink-0" aria-hidden />
+      {!compact ? <span>{label}</span> : null}
     </a>
   );
 }

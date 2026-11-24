@@ -8,8 +8,10 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from "react";
+import { usePathname } from "next/navigation";
 import { Bot, MessageCircle, Send, X } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { getWhatsAppHref } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 
 type ChatMessage = {
@@ -21,17 +23,20 @@ type ChatMessage = {
 const welcomeMessage: ChatMessage = {
   id: "welcome",
   role: "assistant",
-  content: `Hello. I'm the ${siteConfig.shortName} assistant. I can answer questions about our products, systems, IT solutions and consulting — and I can also take your enquiry details so our team can follow up.`,
+  content: `Hello. I'm the ${siteConfig.shortName} assistant. I can answer questions about our products, systems, IT solutions and consulting — and I can take your enquiry details or feedback so our team can follow up.`,
 };
 
 export function ChatWidget() {
   const panelId = useId();
+  const pathname = usePathname();
+  const whatsappHref = getWhatsAppHref(pathname);
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([welcomeMessage]);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [enquirySaved, setEnquirySaved] = useState(false);
+  const [feedbackSaved, setFeedbackSaved] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -78,6 +83,7 @@ export function ChatWidget() {
         error?: string;
         message?: string;
         enquirySaved?: boolean;
+        feedbackSaved?: boolean;
       } | null;
 
       if (!response.ok) {
@@ -101,6 +107,10 @@ export function ChatWidget() {
       if (data?.enquirySaved) {
         setEnquirySaved(true);
       }
+
+      if (data?.feedbackSaved) {
+        setFeedbackSaved(true);
+      }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Something went wrong.";
@@ -121,12 +131,12 @@ export function ChatWidget() {
   }
 
   return (
-    <div className="fixed right-4 bottom-4 z-50 flex flex-col items-end gap-3 md:right-6 md:bottom-6">
+    <div className="fixed right-4 bottom-4 z-50 flex flex-col items-end gap-2 md:right-6 md:bottom-6">
       {open ? (
         <section
           id={panelId}
           aria-label={`${siteConfig.shortName} chat assistant`}
-          className="flex h-[min(34rem,70vh)] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden border border-border bg-white shadow-2xl"
+          className="mb-1 flex h-[min(34rem,calc(100vh-8rem))] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-[4px] border border-border bg-white shadow-2xl"
         >
           <header className="flex items-center justify-between bg-navy px-4 py-3 text-white">
             <div className="flex items-center gap-3">
@@ -138,7 +148,7 @@ export function ChatWidget() {
                   {siteConfig.shortName} Assistant
                 </p>
                 <p className="text-xs text-slate-300">
-                  Chat or leave an enquiry
+                  Chat, enquiry or feedback
                 </p>
               </div>
             </div>
@@ -156,6 +166,18 @@ export function ChatWidget() {
             ref={listRef}
             className="flex-1 space-y-3 overflow-y-auto bg-light-bg px-4 py-4"
           >
+            {whatsappHref ? (
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 border border-[#25D366]/30 bg-white px-3 py-2.5 text-sm font-semibold text-[#128C7E] transition hover:bg-[#25D366]/10"
+              >
+                <MessageCircle className="size-4 text-[#25D366]" aria-hidden />
+                WhatsApp
+              </a>
+            ) : null}
+
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -178,6 +200,12 @@ export function ChatWidget() {
             </p>
           ) : null}
 
+          {feedbackSaved ? (
+            <p className="border-t border-emerald-200 bg-emerald-50 px-4 py-2 text-xs text-emerald-900">
+              Feedback saved. Thank you — we appreciate you taking the time.
+            </p>
+          ) : null}
+
           {error ? (
             <p className="border-t border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-950">
               {error}
@@ -195,7 +223,7 @@ export function ChatWidget() {
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={onKeyDown}
                 rows={2}
-                placeholder="Ask a question or start an enquiry…"
+                placeholder="Ask a question, leave feedback, or start an enquiry…"
                 className="max-h-28 min-h-[2.75rem] flex-1 resize-none rounded-[4px] border border-border px-3 py-2 text-sm outline-none focus:border-gold"
                 disabled={pending}
               />
@@ -217,12 +245,12 @@ export function ChatWidget() {
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-controls={panelId}
-        className="inline-flex items-center gap-2 bg-navy px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-[#15233a]"
+        className="inline-flex h-12 min-w-[12.5rem] items-center justify-center gap-2 rounded-[4px] bg-navy px-4 text-sm font-semibold text-white shadow-md transition hover:bg-[#15233a]"
       >
         {open ? (
           <>
             <X className="size-5" aria-hidden />
-            Close
+            Close chat
           </>
         ) : (
           <>

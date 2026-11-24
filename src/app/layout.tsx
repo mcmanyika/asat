@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { siteConfig } from "@/config/site";
@@ -29,7 +28,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
-        <WhatsAppButton />
         <ChatWidget />
         <span className="sr-only">{siteConfig.tagline}</span>
       </body>
