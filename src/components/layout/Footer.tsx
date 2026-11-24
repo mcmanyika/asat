@@ -156,7 +156,7 @@ export function Footer() {
                 href="https://www.partsonmanyika.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-300 transition hover:text-white"
+                className="cursor-pointer text-slate-300 underline-offset-2 transition hover:text-white hover:underline"
               >
                 Manyika
               </a>
