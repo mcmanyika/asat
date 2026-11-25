@@ -105,8 +105,8 @@ export const systems: SystemItem[] = [
       "Electronic shelf labels for real-time price changes, stock insight and promotion visibility.",
     description:
       "ASAT Electronic Label Solution enables real-time price changes on your shelves. Tags can display stock on hand and rate of sale to support ordering, flash to highlight products on promotion, and are available in different sizes to suit store layouts.",
-    image: "/images/systems/retail-pos.png",
-    imageAlt: "Electronic shelf labels in a retail environment",
+    image: "/images/systems/electronic-label-solution.png",
+    imageAlt: "Smart supermarket tea and coffee aisle with electronic shelf labels",
     highlights: [
       "Real-time price changes on your shelves",
       "Stock on hand and rate of sale display to support ordering",

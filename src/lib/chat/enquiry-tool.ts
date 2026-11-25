@@ -59,7 +59,7 @@ export const saveEnquiryTool: OpenAI.Chat.Completions.ChatCompletionTool = {
         message: {
           type: "string",
           description:
-            "Summary of the visitor's requirements in their own words.",
+            "Summary of the visitor's requirements in their own words. For POS/systems quotes, must include till points (POS terminals) and back office user counts.",
         },
         privacyConsent: {
           type: "boolean",
