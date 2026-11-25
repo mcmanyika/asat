@@ -15,13 +15,18 @@ import type { StaffUser } from "@/lib/admin/types";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-const nav = [
+const baseNav = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/enquiries", label: "Enquiries", icon: Inbox },
   { href: "/admin/feedback", label: "Feedback", icon: MessageSquareText },
   { href: "/admin/staff", label: "Staff", icon: Users },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
+
+const settingsNav = {
+  href: "/admin/settings",
+  label: "Settings",
+  icon: Settings,
+} as const;
 
 type AdminShellProps = {
   staff: StaffUser;
@@ -30,6 +35,8 @@ type AdminShellProps = {
 
 export function AdminShell({ staff, children }: AdminShellProps) {
   const pathname = usePathname();
+  const nav =
+    staff.role === "superuser" ? [...baseNav, settingsNav] : [...baseNav];
 
   return (
     <div className="flex min-h-full bg-light-bg">

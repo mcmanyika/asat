@@ -151,11 +151,14 @@ export async function listStaffProfiles(): Promise<StaffProfileRow[]> {
 
   const { data } = await supabase
     .from("staff_profiles")
-    .select("user_id, email, full_name, status, notify_on_enquiry, created_at")
+    .select(
+      "user_id, email, full_name, status, role, notify_on_enquiry, created_at",
+    )
     .order("created_at", { ascending: false });
 
   return ((data || []) as StaffProfileRow[]).map((item) => ({
     ...item,
+    role: item.role === "superuser" ? "superuser" : "staff",
     notify_on_enquiry: Boolean(item.notify_on_enquiry),
   }));
 }

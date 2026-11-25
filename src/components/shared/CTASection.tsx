@@ -12,7 +12,7 @@ type CTASectionProps = {
 
 export function CTASection({
   title = "Ready to Transform Your Business?",
-  description = "Discover the right technology, systems and solutions to support your business objectives.",
+  description = "Discover the right technology, systems and solutions to support your business",
   primaryHref = "/request-consultation",
   primaryLabel = "Request a Consultation",
   secondaryHref = "/contact",

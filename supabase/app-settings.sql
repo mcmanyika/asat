@@ -46,3 +46,7 @@ create policy "Service role full access app_settings"
 insert into public.app_settings (key, value)
 values ('enquiry_notify_emails', '')
 on conflict (key) do nothing;
+
+-- Landing section visibility seed + public read policy:
+-- Run supabase/landing-sections.sql
+

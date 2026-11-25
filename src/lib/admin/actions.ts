@@ -1,11 +1,18 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createSupabaseAuthServerClient } from "@/lib/supabase/auth-server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { requireStaffUser } from "@/lib/admin/auth";
+import { requireStaffUser, requireSuperuser } from "@/lib/admin/auth";
+import {
+  DEFAULT_LANDING_SECTIONS,
+  LANDING_SECTION_META,
+  LANDING_SECTIONS_KEY,
+  type LandingSectionKey,
+  type LandingSectionsVisibility,
+} from "@/lib/content/landing-sections-shared";
 import {
   ENQUIRY_NOTIFY_EMAILS_KEY,
   parseEmailList,
@@ -353,7 +360,7 @@ export async function updateFeedbackStatus(formData: FormData) {
 }
 
 export async function updateEnquiryNotifyEmails(formData: FormData) {
-  const staff = await requireStaffUser();
+  const staff = await requireSuperuser();
   const raw = String(formData.get("emails") || "");
   const emails = parseEmailList(raw);
 
@@ -391,4 +398,41 @@ export async function updateEnquiryNotifyEmails(formData: FormData) {
 
   revalidatePath("/admin/settings");
   return { ok: true as const, count: emails.length };
+}
+
+export async function updateLandingSections(formData: FormData) {
+  const staff = await requireSuperuser();
+
+  const sections = { ...DEFAULT_LANDING_SECTIONS } as LandingSectionsVisibility;
+  for (const { key } of LANDING_SECTION_META) {
+    const raw = String(formData.get(key) || "");
+    sections[key as LandingSectionKey] = raw === "true";
+  }
+
+  const supabase = await createSupabaseAuthServerClient();
+  if (!supabase) return { error: "Supabase is not configured." };
+
+  const { error } = await supabase.from("app_settings").upsert(
+    {
+      key: LANDING_SECTIONS_KEY,
+      value: JSON.stringify(sections),
+      updated_at: new Date().toISOString(),
+      updated_by: staff.id,
+    },
+    { onConflict: "key" },
+  );
+
+  if (error) {
+    return {
+      error:
+        error.message.includes("does not exist") || error.code === "42P01"
+          ? "Settings table missing. Run supabase/app-settings.sql then supabase/landing-sections.sql."
+          : error.message,
+    };
+  }
+
+  updateTag("landing-sections");
+  revalidatePath("/");
+  revalidatePath("/admin/settings");
+  return { ok: true as const };
 }

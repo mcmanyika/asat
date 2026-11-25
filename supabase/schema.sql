@@ -118,3 +118,7 @@ comment on table public.feedback is
 -- Run supabase/staff-notify-emails.sql
 -- Catalog content (products, systems, solutions, consulting, industries):
 -- Run supabase/content-catalog.sql
+-- Landing page section toggles:
+-- Run supabase/landing-sections.sql
+-- Superuser role (Settings access):
+-- Run supabase/staff-superuser.sql

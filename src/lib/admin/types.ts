@@ -29,11 +29,14 @@ export type FeedbackRow = {
 
 export type StaffStatus = "pending" | "approved" | "rejected";
 
+export type StaffRole = "staff" | "superuser";
+
 export type StaffUser = {
   id: string;
   email: string;
   fullName: string | null;
   status: StaffStatus;
+  role: StaffRole;
 };
 
 export type StaffProfileRow = {
@@ -41,6 +44,7 @@ export type StaffProfileRow = {
   email: string;
   full_name: string | null;
   status: StaffStatus;
+  role: StaffRole;
   notify_on_enquiry: boolean;
   created_at: string;
 };

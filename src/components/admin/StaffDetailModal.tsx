@@ -136,6 +136,14 @@ export function StaffDetailModal({
                 {formatDateTime(staff.created_at)}
               </dd>
             </div>
+            <div>
+              <dt className="text-xs font-semibold tracking-wide text-secondary-text uppercase">
+                Role
+              </dt>
+              <dd className="mt-2 text-sm font-medium text-primary-text">
+                {staff.role === "superuser" ? "Superuser" : "Staff"}
+              </dd>
+            </div>
           </dl>
 
           <div className="border border-border bg-light-bg p-4">
