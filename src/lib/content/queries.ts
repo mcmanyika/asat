@@ -1,6 +1,5 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
 import { products as fallbackProducts } from "@/data/products";
 import { systems as fallbackSystems } from "@/data/systems";
 import { solutions as fallbackSolutions } from "@/data/solutions";
@@ -25,10 +24,6 @@ import type {
 } from "@/types";
 
 async function fetchCategoryRows(category: ContentCategory) {
-  "use cache";
-  cacheTag("content-catalog", `content-${category}`);
-  cacheLife("hours");
-
   const supabase = createSupabaseServerClient();
   if (!supabase) return null;
 
