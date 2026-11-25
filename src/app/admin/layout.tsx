@@ -16,7 +16,7 @@ export default function AdminRootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 z-[100] overflow-auto bg-light-bg">
+    <div className="fixed inset-0 z-[100] overflow-hidden bg-light-bg">
       {children}
     </div>
   );

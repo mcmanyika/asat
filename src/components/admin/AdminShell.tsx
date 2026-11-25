@@ -41,15 +41,15 @@ export function AdminShell({ staff, children }: AdminShellProps) {
     staff.role === "superuser" ? [...baseNav, settingsNav] : [...baseNav];
 
   return (
-    <div className="flex min-h-full bg-light-bg">
-      <aside className="hidden w-60 shrink-0 border-r border-border bg-navy text-white md:flex md:flex-col">
-        <div className="border-b border-white/10 px-5 py-5">
+    <div className="flex h-dvh overflow-hidden bg-light-bg">
+      <aside className="hidden h-dvh w-60 shrink-0 flex-col border-r border-border bg-navy text-white md:flex">
+        <div className="shrink-0 border-b border-white/10 px-5 py-5">
           <p className="text-xs tracking-[0.18em] text-gold uppercase">
             {siteConfig.shortName} Staff
           </p>
           <p className="mt-1 text-sm font-semibold">Operations Dashboard</p>
         </div>
-        <nav className="flex flex-1 flex-col gap-1 p-3">
+        <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto p-3">
           {nav.map((item) => {
             const Icon = item.icon;
             const active =
@@ -73,7 +73,7 @@ export function AdminShell({ staff, children }: AdminShellProps) {
             );
           })}
         </nav>
-        <div className="border-t border-white/10 p-4">
+        <div className="shrink-0 border-t border-white/10 p-4">
           <p className="truncate text-xs text-slate-300">
             {staff.fullName || staff.email}
           </p>
@@ -89,8 +89,8 @@ export function AdminShell({ staff, children }: AdminShellProps) {
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-border bg-white px-4 py-3 md:px-6">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="flex shrink-0 items-center justify-between border-b border-border bg-white px-4 py-3 md:px-6">
           <div className="md:hidden">
             <p className="text-sm font-semibold text-primary-text">
               {siteConfig.shortName} Admin
@@ -106,7 +106,7 @@ export function AdminShell({ staff, children }: AdminShellProps) {
           </div>
         </header>
 
-        <nav className="flex gap-2 overflow-x-auto border-b border-border bg-white px-4 py-2 md:hidden">
+        <nav className="flex shrink-0 gap-2 overflow-x-auto border-b border-border bg-white px-4 py-2 md:hidden">
           {nav.map((item) => {
             const active =
               item.href === "/admin"
@@ -129,7 +129,9 @@ export function AdminShell({ staff, children }: AdminShellProps) {
           })}
         </nav>
 
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        <main className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
+          {children}
+        </main>
       </div>
     </div>
   );
