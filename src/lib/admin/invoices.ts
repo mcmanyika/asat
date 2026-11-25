@@ -71,22 +71,55 @@ function mapItem(row: Record<string, unknown>): InvoiceItemRow {
   };
 }
 
+function sanitizeSearch(value?: string) {
+  return (value || "").trim().replace(/[%_,]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+const invoiceSortOptions: Record<
+  string,
+  { column: string; ascending: boolean }
+> = {
+  newest: { column: "created_at", ascending: false },
+  oldest: { column: "created_at", ascending: true },
+  number_asc: { column: "number", ascending: true },
+  number_desc: { column: "number", ascending: false },
+  customer_asc: { column: "customer_name", ascending: true },
+  customer_desc: { column: "customer_name", ascending: false },
+  issue_newest: { column: "issue_date", ascending: false },
+  issue_oldest: { column: "issue_date", ascending: true },
+  total_desc: { column: "total", ascending: false },
+  total_asc: { column: "total", ascending: true },
+  status: { column: "status", ascending: true },
+};
+
 export async function listInvoices(filters?: {
+  q?: string;
   status?: string;
+  sort?: string;
 }): Promise<InvoiceRow[]> {
   const supabase = await getAdminSupabase();
   if (!supabase) return [];
 
-  let query = supabase
-    .from("invoices")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const sort =
+    (filters?.sort && invoiceSortOptions[filters.sort]) ||
+    invoiceSortOptions.newest;
+
+  let query = supabase.from("invoices").select("*");
 
   if (filters?.status) {
     query = query.eq("status", filters.status);
   }
 
-  const { data, error } = await query;
+  const q = sanitizeSearch(filters?.q);
+  if (q) {
+    query = query.or(
+      `number.ilike.%${q}%,customer_name.ilike.%${q}%,customer_email.ilike.%${q}%,customer_company.ilike.%${q}%`,
+    );
+  }
+
+  const { data, error } = await query.order(sort.column, {
+    ascending: sort.ascending,
+  });
   if (error) {
     console.error("[invoices] list failed:", error.message);
     return [];

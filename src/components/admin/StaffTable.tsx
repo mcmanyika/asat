@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StaffDetailModal } from "@/components/admin/StaffDetailModal";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { StatusSelect } from "@/components/admin/StatusSelect";
@@ -11,6 +11,10 @@ import type { StaffProfileRow } from "@/lib/admin/types";
 export function StaffTable({ staff }: { staff: StaffProfileRow[] }) {
   const [rows, setRows] = useState(staff);
   const [selected, setSelected] = useState<StaffProfileRow | null>(null);
+
+  useEffect(() => {
+    setRows(staff);
+  }, [staff]);
 
   return (
     <>
@@ -33,7 +37,7 @@ export function StaffTable({ staff }: { staff: StaffProfileRow[] }) {
                   colSpan={6}
                   className="px-4 py-8 text-center text-secondary-text"
                 >
-                  No staff profiles yet.
+                  No staff profiles match these filters.
                 </td>
               </tr>
             ) : (

@@ -27,7 +27,7 @@ export function InvoicesTable({ invoices }: { invoices: InvoiceRow[] }) {
                 colSpan={5}
                 className="px-4 py-8 text-center text-secondary-text"
               >
-                No invoices yet.
+                No invoices match these filters.
               </td>
             </tr>
           ) : (
