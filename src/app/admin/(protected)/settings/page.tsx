@@ -1,17 +1,20 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
+import { InvoiceLayoutForm } from "@/components/admin/InvoiceLayoutForm";
 import { LandingSectionsForm } from "@/components/admin/LandingSectionsForm";
 import { NotifyEmailsForm } from "@/components/admin/NotifyEmailsForm";
 import { requireSuperuser } from "@/lib/admin/auth";
 import { getLandingSectionsVisibilityFresh } from "@/lib/content/landing-sections";
 import { getEnquiryNotifyEmailsSetting } from "@/lib/email/config";
+import { getInvoiceLayoutFresh } from "@/lib/invoices/layout";
 
 async function SettingsContent() {
   await connection();
   await requireSuperuser();
-  const [notifySetting, landingSections] = await Promise.all([
+  const [notifySetting, landingSections, invoiceLayout] = await Promise.all([
     getEnquiryNotifyEmailsSetting(),
     getLandingSectionsVisibilityFresh(),
+    getInvoiceLayoutFresh(),
   ]);
 
   return (
@@ -19,9 +22,19 @@ async function SettingsContent() {
       <div>
         <h1 className="text-2xl font-bold text-primary-text">Settings</h1>
         <p className="mt-1 text-sm text-secondary-text">
-          Control enquiry alerts and which landing page sections are visible.
+          Control landing sections, invoice layout, and enquiry alerts.
         </p>
       </div>
+
+      <section className="max-w-2xl border border-border bg-white p-5 shadow-sm">
+        <h2 className="text-lg font-semibold text-primary-text">
+          Invoice layout
+        </h2>
+        <p className="mt-1 mb-4 text-sm text-secondary-text">
+          Branding and structure used for invoice PDFs and customer emails.
+        </p>
+        <InvoiceLayoutForm initial={invoiceLayout} />
+      </section>
 
       <section className="max-w-2xl border border-border bg-white p-5 shadow-sm">
         <h2 className="text-lg font-semibold text-primary-text">

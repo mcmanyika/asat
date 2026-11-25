@@ -1,8 +1,8 @@
 import "server-only";
 
-import { siteConfig } from "@/config/site";
 import { formatDate, formatMoney } from "@/lib/admin/format";
 import { sendEmail } from "@/lib/email/send";
+import { getInvoiceLayout } from "@/lib/invoices/layout";
 import type { InvoiceWithItems } from "@/lib/admin/types";
 
 function escapeHtml(value: string) {
@@ -26,15 +26,17 @@ export async function sendInvoiceEmail(invoice: InvoiceWithItems) {
     return { ok: false as const, error: "Customer email is required." };
   }
 
+  const layout = await getInvoiceLayout();
+
   let pdf: Buffer | null = null;
   try {
     const { buildInvoicePdf } = await import("@/lib/invoices/pdf");
-    pdf = await buildInvoicePdf(invoice);
+    pdf = await buildInvoicePdf(invoice, layout);
   } catch (error) {
     console.error("Invoice PDF generation failed:", error);
   }
 
-  const currency = invoice.currency || "USD";
+  const currency = invoice.currency || layout.defaultCurrency || "USD";
   const rows = invoice.items
     .map(
       (item) =>
@@ -47,54 +49,69 @@ export async function sendInvoiceEmail(invoice: InvoiceWithItems) {
     )
     .join("");
 
-  const subject = `Invoice ${invoice.number} from ${siteConfig.name}`;
+  const subject = `${layout.documentTitle || "Invoice"} ${invoice.number} from ${layout.companyName}`;
   const html = `
     <div style="font-family:Arial,sans-serif;color:#0B1628;line-height:1.5;">
+      <div style="border-top:6px solid ${escapeHtml(layout.accentColor)};padding-top:12px;margin-bottom:16px;">
+        <strong style="color:${escapeHtml(layout.accentColor)};">${escapeHtml(layout.companyName)}</strong>
+      </div>
       <p>Hello ${escapeHtml(invoice.customer_name)},</p>
       <p>${
         pdf
-          ? `Please find invoice <strong>${escapeHtml(invoice.number)}</strong> attached.`
-          : `Here are the details for invoice <strong>${escapeHtml(invoice.number)}</strong>.`
+          ? `Please find ${escapeHtml(layout.documentTitle.toLowerCase())} <strong>${escapeHtml(invoice.number)}</strong> attached.`
+          : `Here are the details for ${escapeHtml(layout.documentTitle.toLowerCase())} <strong>${escapeHtml(invoice.number)}</strong>.`
       }</p>
       <p>
         Issue date: ${escapeHtml(formatDate(invoice.issue_date))}<br/>
-        Due date: ${escapeHtml(formatDate(invoice.due_date))}<br/>
+        ${
+          layout.showDueDate
+            ? `Due date: ${escapeHtml(formatDate(invoice.due_date))}<br/>`
+            : ""
+        }
         Total due: <strong>${escapeHtml(formatMoney(invoice.total, currency))}</strong>
       </p>
       <table style="width:100%;border-collapse:collapse;margin:16px 0;">
         <thead>
           <tr>
-            <th style="text-align:left;padding:8px;border-bottom:2px solid #cbd5e1;">Description</th>
-            <th style="text-align:right;padding:8px;border-bottom:2px solid #cbd5e1;">Qty</th>
-            <th style="text-align:right;padding:8px;border-bottom:2px solid #cbd5e1;">Unit</th>
-            <th style="text-align:right;padding:8px;border-bottom:2px solid #cbd5e1;">Total</th>
+            <th style="text-align:left;padding:8px;border-bottom:2px solid ${escapeHtml(layout.accentColor)};">Description</th>
+            <th style="text-align:right;padding:8px;border-bottom:2px solid ${escapeHtml(layout.accentColor)};">Qty</th>
+            <th style="text-align:right;padding:8px;border-bottom:2px solid ${escapeHtml(layout.accentColor)};">Unit</th>
+            <th style="text-align:right;padding:8px;border-bottom:2px solid ${escapeHtml(layout.accentColor)};">Total</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
       </table>
-      <p>If you have any questions, reply to this email or contact ${escapeHtml(siteConfig.contact.email || siteConfig.name)}.</p>
-      <p>Thank you,<br/>${escapeHtml(siteConfig.name)}</p>
+      <p>If you have any questions, reply to this email or contact ${escapeHtml(layout.companyEmail || layout.companyName)}.</p>
+      ${
+        layout.footerNote?.trim()
+          ? `<p style="color:#64748b;">${escapeHtml(layout.footerNote)}</p>`
+          : ""
+      }
+      <p>Thank you,<br/>${escapeHtml(layout.companyName)}</p>
     </div>
   `;
 
   const text = [
     `Hello ${invoice.customer_name},`,
     "",
-    `Invoice ${invoice.number}`,
+    `${layout.documentTitle} ${invoice.number}`,
     `Issue date: ${formatDate(invoice.issue_date)}`,
-    `Due date: ${formatDate(invoice.due_date)}`,
+    layout.showDueDate ? `Due date: ${formatDate(invoice.due_date)}` : null,
     `Total due: ${formatMoney(invoice.total, currency)}`,
     "",
+    layout.footerNote?.trim() || null,
     `Thank you,`,
-    siteConfig.name,
-  ].join("\n");
+    layout.companyName,
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   return sendEmail({
     to: [email],
     subject,
     html,
     text,
-    replyTo: siteConfig.contact.email || undefined,
+    replyTo: layout.companyEmail || undefined,
     attachments: pdf
       ? [
           {

@@ -124,3 +124,5 @@ comment on table public.feedback is
 -- Run supabase/staff-superuser.sql
 -- Invoicing module:
 -- Run supabase/invoices.sql
+-- Invoice layout customization:
+-- Run supabase/invoice-layout.sql

@@ -11,11 +11,15 @@ type InvoiceFormFromEnquiryProps = {
     customer_company: string;
     customer_phone: string;
   };
+  defaultCurrency?: string;
+  defaultTaxRate?: number;
 };
 
 export function InvoiceFormFromEnquiry({
   enquiryId,
   defaults,
+  defaultCurrency = "USD",
+  defaultTaxRate = 0,
 }: InvoiceFormFromEnquiryProps) {
   const hasDefaults = Boolean(
     defaults.customer_name ||
@@ -36,8 +40,8 @@ export function InvoiceFormFromEnquiry({
         customer_address: null,
         issue_date: new Date().toISOString().slice(0, 10),
         due_date: null,
-        currency: "USD",
-        tax_rate: 0,
+        currency: defaultCurrency,
+        tax_rate: defaultTaxRate,
         notes: null,
         enquiry_id: enquiryId || null,
         subtotal: 0,
@@ -55,6 +59,8 @@ export function InvoiceFormFromEnquiry({
       mode="create"
       enquiryId={enquiryId}
       invoice={seed}
+      defaultCurrency={defaultCurrency}
+      defaultTaxRate={defaultTaxRate}
     />
   );
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { InvoiceFormFromEnquiry } from "@/components/admin/InvoiceFormFromEnquiry";
+import { getInvoiceLayout } from "@/lib/invoices/layout";
 
 type SearchParams = Promise<{
   enquiryId?: string;
@@ -17,7 +18,10 @@ async function NewInvoiceContent({
   searchParams: SearchParams;
 }) {
   await connection();
-  const params = await searchParams;
+  const [params, layout] = await Promise.all([
+    searchParams,
+    getInvoiceLayout(),
+  ]);
 
   return (
     <div className="space-y-5">
@@ -44,6 +48,8 @@ async function NewInvoiceContent({
           customer_company: params.company || "",
           customer_phone: params.phone || "",
         }}
+        defaultCurrency={layout.defaultCurrency}
+        defaultTaxRate={layout.defaultTaxRate}
       />
     </div>
   );

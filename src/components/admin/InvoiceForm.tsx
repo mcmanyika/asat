@@ -25,6 +25,8 @@ type InvoiceFormProps = {
   invoice?: InvoiceWithItems;
   enquiryId?: string | null;
   locked?: boolean;
+  defaultCurrency?: string;
+  defaultTaxRate?: number;
 };
 
 export function InvoiceForm({
@@ -32,6 +34,8 @@ export function InvoiceForm({
   invoice,
   enquiryId,
   locked = false,
+  defaultCurrency = "USD",
+  defaultTaxRate = 0,
 }: InvoiceFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
@@ -46,8 +50,10 @@ export function InvoiceForm({
         }))
       : [emptyLine()],
   );
-  const [taxRate, setTaxRate] = useState(invoice?.tax_rate ?? 0);
-  const currency = invoice?.currency || "USD";
+  const [taxRate, setTaxRate] = useState(
+    invoice?.tax_rate ?? defaultTaxRate,
+  );
+  const currency = invoice?.currency || defaultCurrency;
 
   const totals = useMemo(() => {
     const subtotal = lines.reduce(

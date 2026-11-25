@@ -14,6 +14,13 @@ import {
   type LandingSectionsVisibility,
 } from "@/lib/content/landing-sections-shared";
 import {
+  DEFAULT_INVOICE_LAYOUT,
+  INVOICE_LAYOUT_KEY,
+  normalizeHex,
+  type InvoiceHeaderStyle,
+  type InvoiceLayoutSettings,
+} from "@/lib/invoices/layout-shared";
+import {
   ENQUIRY_NOTIFY_EMAILS_KEY,
   parseEmailList,
 } from "@/lib/email/config";
@@ -434,5 +441,70 @@ export async function updateLandingSections(formData: FormData) {
   updateTag("landing-sections");
   revalidatePath("/");
   revalidatePath("/admin/settings");
+  return { ok: true as const };
+}
+
+export async function updateInvoiceLayout(formData: FormData) {
+  const staff = await requireSuperuser();
+
+  const headerRaw = String(formData.get("headerStyle") || "split");
+  const headerStyle: InvoiceHeaderStyle =
+    headerRaw === "stacked" ? "stacked" : "split";
+
+  const layout: InvoiceLayoutSettings = {
+    companyName:
+      String(formData.get("companyName") || "").trim() ||
+      DEFAULT_INVOICE_LAYOUT.companyName,
+    companyEmail: String(formData.get("companyEmail") || "").trim(),
+    companyPhone: String(formData.get("companyPhone") || "").trim(),
+    companyAddress: String(formData.get("companyAddress") || "").trim(),
+    documentTitle:
+      String(formData.get("documentTitle") || "").trim() || "INVOICE",
+    accentColor: normalizeHex(
+      String(formData.get("accentColor") || ""),
+      DEFAULT_INVOICE_LAYOUT.accentColor,
+    ),
+    logoPath:
+      String(formData.get("logoPath") || "").trim() ||
+      DEFAULT_INVOICE_LAYOUT.logoPath,
+    showLogo: String(formData.get("showLogo") || "") === "true",
+    headerStyle,
+    showStatus: String(formData.get("showStatus") || "") === "true",
+    showDueDate: String(formData.get("showDueDate") || "") === "true",
+    showTax: String(formData.get("showTax") || "") === "true",
+    footerNote: String(formData.get("footerNote") || ""),
+    defaultCurrency:
+      String(formData.get("defaultCurrency") || "").trim() || "USD",
+    defaultTaxRate: Math.max(
+      0,
+      Number(formData.get("defaultTaxRate") || 0) || 0,
+    ),
+  };
+
+  const supabase = await createSupabaseAuthServerClient();
+  if (!supabase) return { error: "Supabase is not configured." };
+
+  const { error } = await supabase.from("app_settings").upsert(
+    {
+      key: INVOICE_LAYOUT_KEY,
+      value: JSON.stringify(layout),
+      updated_at: new Date().toISOString(),
+      updated_by: staff.id,
+    },
+    { onConflict: "key" },
+  );
+
+  if (error) {
+    return {
+      error:
+        error.message.includes("does not exist") || error.code === "42P01"
+          ? "Settings table missing. Run supabase/app-settings.sql then supabase/invoice-layout.sql."
+          : error.message,
+    };
+  }
+
+  updateTag("invoice-layout");
+  revalidatePath("/admin/settings");
+  revalidatePath("/admin/invoices");
   return { ok: true as const };
 }
