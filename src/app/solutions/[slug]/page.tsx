@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import { ContentDetail } from "@/components/shared/ContentDetail";
 import { DetailPageFallback } from "@/components/shared/DetailPageFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
-import { getSolutionBySlug, solutions } from "@/data/solutions";
+import { getSolutionBySlug, getSolutions } from "@/lib/content/queries";
 import { breadcrumbJsonLd, buildMetadata, serviceJsonLd } from "@/lib/seo";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const solutions = await getSolutions();
   return solutions.map((solution) => ({ slug: solution.slug }));
 }
 
@@ -16,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const solution = getSolutionBySlug(slug);
+  const solution = await getSolutionBySlug(slug);
   if (!solution) return {};
   return buildMetadata({
     title: solution.name,
@@ -32,7 +33,7 @@ async function SolutionDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const solution = getSolutionBySlug(slug);
+  const solution = await getSolutionBySlug(slug);
   if (!solution) notFound();
 
   return (

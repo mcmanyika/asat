@@ -35,6 +35,10 @@ export const mainNavigation: NavItem[] = [
       { label: "Retail POS", href: "/systems/retail-pos" },
       { label: "Pharmacy POS", href: "/systems/pharmacy-pos" },
       { label: "Restaurant POS", href: "/systems/restaurant-pos" },
+      {
+        label: "Electronic Label Solution",
+        href: "/systems/electronic-label-solution",
+      },
     ],
   },
   {
@@ -84,6 +88,10 @@ export const footerLinks = {
     { label: "Retail POS", href: "/systems/retail-pos" },
     { label: "Pharmacy POS", href: "/systems/pharmacy-pos" },
     { label: "Restaurant POS", href: "/systems/restaurant-pos" },
+    {
+      label: "Electronic Label Solution",
+      href: "/systems/electronic-label-solution",
+    },
   ],
   solutionsConsulting: [
     { label: "Antivirus", href: "/solutions/antivirus" },

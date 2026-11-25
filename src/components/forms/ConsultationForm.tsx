@@ -4,9 +4,11 @@ import type { InterestArea } from "@/types";
 export function ConsultationForm({
   defaultInterest,
   defaultSubject,
+  backendReady,
 }: {
   defaultInterest?: InterestArea;
   defaultSubject?: string;
+  backendReady: boolean;
 }) {
   return (
     <EnquiryForm
@@ -14,6 +16,7 @@ export function ConsultationForm({
       defaultInterest={defaultInterest || "consulting"}
       defaultSubject={defaultSubject}
       submitLabel="Request Consultation"
+      backendReady={backendReady}
     />
   );
 }

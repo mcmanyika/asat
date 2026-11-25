@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { notifyStaffOfEnquiry } from "@/lib/email/enquiry-notification";
 import {
   createSupabaseServerClient,
   type EnquiryInsert,
@@ -50,6 +51,13 @@ export async function saveEnquiry(input: EnquiryInsert) {
         ? "Database permissions are missing. Run supabase/fix-grants.sql in the Supabase SQL Editor, then try again."
         : "Unable to save the enquiry right now. Please try again or use the contact form.",
     };
+  }
+
+  // Email failure should not fail the enquiry submission.
+  try {
+    await notifyStaffOfEnquiry({ ...input, id });
+  } catch (notifyError) {
+    console.error("Enquiry staff notification failed:", notifyError);
   }
 
   return { ok: true as const, id };

@@ -4,9 +4,11 @@ import type { InterestArea } from "@/types";
 export function DemoForm({
   defaultInterest,
   defaultSubject,
+  backendReady,
 }: {
   defaultInterest?: InterestArea;
   defaultSubject?: string;
+  backendReady: boolean;
 }) {
   return (
     <EnquiryForm
@@ -14,6 +16,7 @@ export function DemoForm({
       defaultInterest={defaultInterest || "business-systems"}
       defaultSubject={defaultSubject}
       submitLabel="Request Demo"
+      backendReady={backendReady}
     />
   );
 }

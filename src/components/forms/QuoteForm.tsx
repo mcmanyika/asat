@@ -4,9 +4,11 @@ import type { InterestArea } from "@/types";
 export function QuoteForm({
   defaultInterest,
   defaultSubject,
+  backendReady,
 }: {
   defaultInterest?: InterestArea;
   defaultSubject?: string;
+  backendReady: boolean;
 }) {
   return (
     <EnquiryForm
@@ -14,6 +16,7 @@ export function QuoteForm({
       defaultInterest={defaultInterest || "products"}
       defaultSubject={defaultSubject}
       submitLabel="Request Quote"
+      backendReady={backendReady}
     />
   );
 }

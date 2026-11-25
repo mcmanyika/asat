@@ -1,24 +1,24 @@
-import { CatalogGrid } from "@/components/shared/CatalogGrid";
-import { systems } from "@/data/systems";
+import { CatalogPage } from "@/components/shared/CatalogPage";
+import { getSystems } from "@/lib/content/queries";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "Business Systems",
   description:
-    "Enterprise business systems including Microsoft Dynamics 365 Business Central and industry-focused POS solutions.",
+    "Microsoft Dynamics 365 Business Central, retail, pharmacy and restaurant POS, plus electronic shelf label solutions.",
   path: "/systems",
 });
 
 export default function SystemsPage() {
   return (
-    <CatalogGrid
+    <CatalogPage
       title="Business Systems"
-      description="Integrated enterprise management and industry-specific point-of-sale solutions."
+      description="Enterprise ERP, industry POS linked to Business Central, and electronic label solutions for modern retail."
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "Business Systems" },
       ]}
-      items={systems}
+      loadItems={getSystems}
     />
   );
 }

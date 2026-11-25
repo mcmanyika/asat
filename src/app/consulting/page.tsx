@@ -1,5 +1,5 @@
-import { CatalogGrid } from "@/components/shared/CatalogGrid";
-import { consultingServices } from "@/data/consulting";
+import { CatalogPage } from "@/components/shared/CatalogPage";
+import { getConsultingServices } from "@/lib/content/queries";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -11,14 +11,14 @@ export const metadata = buildMetadata({
 
 export default function ConsultingPage() {
   return (
-    <CatalogGrid
+    <CatalogPage
       title="Consulting Services"
       description="Expert consulting to support retail operations, security analysis and business analytics."
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "Consulting" },
       ]}
-      items={consultingServices}
+      loadItems={getConsultingServices}
     />
   );
 }

@@ -109,3 +109,12 @@ create policy "Service role full access feedback"
 
 comment on table public.feedback is
   'Website and chatbot feedback submissions from visitors.';
+
+-- Staff dashboard (auth + RLS for authenticated staff):
+-- Run supabase/staff-dashboard.sql after creating Auth users.
+-- Editable enquiry notify emails:
+-- Run supabase/app-settings.sql
+-- Per-staff enquiry email toggle:
+-- Run supabase/staff-notify-emails.sql
+-- Catalog content (products, systems, solutions, consulting, industries):
+-- Run supabase/content-catalog.sql

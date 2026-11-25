@@ -1,12 +1,8 @@
 import type { MetadataRoute } from "next";
-import { products } from "@/data/products";
-import { systems } from "@/data/systems";
-import { solutions } from "@/data/solutions";
-import { consultingServices } from "@/data/consulting";
-import { industries } from "@/data/industries";
+import { getAllCatalogHrefs } from "@/lib/content/queries";
 import { absoluteUrl } from "@/lib/utils";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "/",
     "/about",
@@ -23,13 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/terms",
   ];
 
-  const dynamicRoutes = [
-    ...products.map((item) => item.href),
-    ...systems.map((item) => item.href),
-    ...solutions.map((item) => item.href),
-    ...consultingServices.map((item) => item.href),
-    ...industries.map((item) => item.href),
-  ];
+  const dynamicRoutes = await getAllCatalogHrefs();
 
   return [...staticRoutes, ...dynamicRoutes].map((path) => ({
     url: absoluteUrl(path),

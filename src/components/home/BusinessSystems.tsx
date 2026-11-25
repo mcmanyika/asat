@@ -4,9 +4,11 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/shared/Container";
 import { ButtonLink } from "@/components/shared/ButtonLink";
 import { SectionHeading } from "@/components/shared/SectionHeading";
-import { systems } from "@/data/systems";
+import { getSystems } from "@/lib/content/queries";
 
-export function BusinessSystems() {
+export async function BusinessSystems() {
+  const systems = await getSystems();
+
   return (
     <section className="bg-white py-16 md:py-20">
       <Container>

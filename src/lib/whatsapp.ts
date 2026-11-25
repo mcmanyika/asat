@@ -4,6 +4,10 @@ import { systems } from "@/data/systems";
 import { solutions } from "@/data/solutions";
 import { consultingServices } from "@/data/consulting";
 
+/**
+ * Client-safe WhatsApp copy. Uses seed catalog for path matching;
+ * pages themselves load live content from Supabase.
+ */
 export function buildWhatsAppMessage(pathname: string) {
   const product = products.find((item) => item.href === pathname);
   if (product) {

@@ -3,10 +3,14 @@ import { notFound } from "next/navigation";
 import { ContentDetail } from "@/components/shared/ContentDetail";
 import { DetailPageFallback } from "@/components/shared/DetailPageFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
-import { consultingServices, getConsultingBySlug } from "@/data/consulting";
+import {
+  getConsultingBySlug,
+  getConsultingServices,
+} from "@/lib/content/queries";
 import { breadcrumbJsonLd, buildMetadata, serviceJsonLd } from "@/lib/seo";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const consultingServices = await getConsultingServices();
   return consultingServices.map((item) => ({ slug: item.slug }));
 }
 
@@ -16,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const item = getConsultingBySlug(slug);
+  const item = await getConsultingBySlug(slug);
   if (!item) return {};
   return buildMetadata({
     title: item.name,
@@ -32,7 +36,7 @@ async function ConsultingDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const item = getConsultingBySlug(slug);
+  const item = await getConsultingBySlug(slug);
   if (!item) notFound();
 
   return (

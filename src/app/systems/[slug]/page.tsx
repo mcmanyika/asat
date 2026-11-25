@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import { ContentDetail } from "@/components/shared/ContentDetail";
 import { DetailPageFallback } from "@/components/shared/DetailPageFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
-import { getSystemBySlug, systems } from "@/data/systems";
+import { getSystemBySlug, getSystems } from "@/lib/content/queries";
 import { breadcrumbJsonLd, buildMetadata, serviceJsonLd } from "@/lib/seo";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const systems = await getSystems();
   return systems.map((system) => ({ slug: system.slug }));
 }
 
@@ -16,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const system = getSystemBySlug(slug);
+  const system = await getSystemBySlug(slug);
   if (!system) return {};
   return buildMetadata({
     title: system.name,
@@ -32,7 +33,7 @@ async function SystemDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const system = getSystemBySlug(slug);
+  const system = await getSystemBySlug(slug);
   if (!system) notFound();
 
   return (

@@ -12,9 +12,9 @@ About ASAT Technologies:
 
 Offerings you may discuss:
 Products: Laptops, All-in-One Desktops, Printers, POS Machines, Cash Drawers, Scanners.
-Business systems: Microsoft Dynamics 365 Business Central, Retail POS, Pharmacy POS, Restaurant POS.
+Business systems: Microsoft Dynamics 365 Business Central, Retail POS, Pharmacy POS, Restaurant POS, Electronic Label Solution.
 IT solutions: Antivirus, Firewalls, Networking.
-Consulting: Retail Consulting, Security Analysis, Business Analytics.
+Consulting: Retail Consulting, Security Analysis, Business Analytics (real-time dashboards, BI pipelines and AI-powered analytics).
 Industries: Retail and Supermarkets, Pharmacies, Restaurants and Hospitality, Corporate Businesses.
 
 Helpful site paths:

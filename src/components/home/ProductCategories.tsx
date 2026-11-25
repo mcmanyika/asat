@@ -1,11 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/shared/Container";
 import { ProductCard } from "@/components/shared/ProductCard";
 import { SectionHeading } from "@/components/shared/SectionHeading";
-import { products } from "@/data/products";
+import { RevealItem, RevealStagger } from "@/components/home/RevealStagger";
+import type { ProductCategory } from "@/types";
 
-export function ProductCategories() {
+type ProductCategoriesProps = {
+  products: ProductCategory[];
+};
+
+export function ProductCategories({ products }: ProductCategoriesProps) {
   return (
     <section className="bg-light-bg py-16 md:py-20">
       <Container>
@@ -22,11 +29,13 @@ export function ProductCategories() {
             </Link>
           }
         />
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
+        <RevealStagger className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
           {products.map((product) => (
-            <ProductCard key={product.slug} product={product} />
+            <RevealItem key={product.slug} className="h-full">
+              <ProductCard product={product} />
+            </RevealItem>
           ))}
-        </div>
+        </RevealStagger>
       </Container>
     </section>
   );

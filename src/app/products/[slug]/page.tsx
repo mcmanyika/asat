@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import { ContentDetail } from "@/components/shared/ContentDetail";
 import { DetailPageFallback } from "@/components/shared/DetailPageFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
-import { getProductBySlug, products } from "@/data/products";
+import { getProductBySlug, getProducts } from "@/lib/content/queries";
 import { breadcrumbJsonLd, buildMetadata, serviceJsonLd } from "@/lib/seo";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const products = await getProducts();
   return products.map((product) => ({ slug: product.slug }));
 }
 
@@ -16,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return {};
   return buildMetadata({
     title: product.name,
@@ -32,7 +33,7 @@ async function ProductDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
   return (

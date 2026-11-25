@@ -8,7 +8,6 @@ import {
   interestLabels,
   type EnquiryFormValues,
 } from "@/lib/validations/enquiry";
-import { isEnquiryBackendReady } from "@/lib/supabase/config";
 import { getConfiguredContactFields } from "@/config/site";
 import { cn } from "@/lib/utils";
 import type { EnquiryFormType, InterestArea } from "@/types";
@@ -18,6 +17,8 @@ type EnquiryFormProps = {
   defaultInterest?: InterestArea;
   defaultSubject?: string;
   submitLabel?: string;
+  /** Evaluated on the server so NEXT_PUBLIC env is reliable. */
+  backendReady: boolean;
 };
 
 const typeCopy: Record<
@@ -47,8 +48,8 @@ export function EnquiryForm({
   defaultInterest = "general",
   defaultSubject,
   submitLabel = "Submit Enquiry",
+  backendReady,
 }: EnquiryFormProps) {
-  const backendReady = isEnquiryBackendReady();
   const contact = getConfiguredContactFields();
   const [status, setStatus] = useState<
     "idle" | "blocked" | "error" | "success"

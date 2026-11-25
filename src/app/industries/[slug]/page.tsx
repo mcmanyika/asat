@@ -8,14 +8,18 @@ import { DetailPageFallback } from "@/components/shared/DetailPageFallback";
 import { PageHero } from "@/components/shared/PageHero";
 import { CTASection } from "@/components/shared/CTASection";
 import { JsonLd } from "@/components/shared/JsonLd";
-import { getIndustryBySlug, industries } from "@/data/industries";
-import { products } from "@/data/products";
-import { systems } from "@/data/systems";
-import { solutions } from "@/data/solutions";
-import { consultingServices } from "@/data/consulting";
+import {
+  getConsultingServices,
+  getIndustries,
+  getIndustryBySlug,
+  getProducts,
+  getSolutions,
+  getSystems,
+} from "@/lib/content/queries";
 import { breadcrumbJsonLd, buildMetadata, serviceJsonLd } from "@/lib/seo";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const industries = await getIndustries();
   return industries.map((item) => ({ slug: item.slug }));
 }
 
@@ -25,7 +29,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const industry = getIndustryBySlug(slug);
+  const industry = await getIndustryBySlug(slug);
   if (!industry) return {};
   return buildMetadata({
     title: industry.name,
@@ -41,8 +45,15 @@ async function IndustryDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const industry = getIndustryBySlug(slug);
+  const industry = await getIndustryBySlug(slug);
   if (!industry) notFound();
+
+  const [products, systems, solutions, consultingServices] = await Promise.all([
+    getProducts(),
+    getSystems(),
+    getSolutions(),
+    getConsultingServices(),
+  ]);
 
   const related = [
     {

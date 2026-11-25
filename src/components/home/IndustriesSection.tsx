@@ -3,9 +3,11 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/shared/Container";
 import { SectionHeading } from "@/components/shared/SectionHeading";
-import { industries } from "@/data/industries";
+import { getIndustries } from "@/lib/content/queries";
 
-export function IndustriesSection() {
+export async function IndustriesSection() {
+  const industries = await getIndustries();
+
   return (
     <section className="bg-light-bg py-16 md:py-20">
       <Container>

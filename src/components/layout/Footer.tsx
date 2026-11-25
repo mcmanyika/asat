@@ -145,23 +145,7 @@ export function Footer() {
 
       <div className="border-t border-white/10">
         <Container className="flex flex-col gap-3 py-5 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-3">
-            <p>© 2026 {siteConfig.name}. All rights reserved.</p>
-            <span className="hidden text-white/20 sm:inline" aria-hidden>
-              |
-            </span>
-            <p>
-              Site developed by{" "}
-              <a
-                href="https://www.partsonmanyika.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cursor-pointer text-slate-300 underline-offset-2 transition hover:text-white hover:underline"
-              >
-                Manyika
-              </a>
-            </p>
-          </div>
+          <p>© 2026 {siteConfig.name}. All rights reserved.</p>
           <div className="flex flex-wrap gap-4">
             {footerLinks.legal.map((link) => (
               <Link key={link.href} href={link.href} className="hover:text-white">

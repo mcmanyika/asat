@@ -1,7 +1,7 @@
 import { HeroSection } from "@/components/home/HeroSection";
 import { CompanyIntroduction } from "@/components/home/CompanyIntroduction";
 import { BusinessDivisions } from "@/components/home/BusinessDivisions";
-import { ProductCategories } from "@/components/home/ProductCategories";
+import { HomeProductCategories } from "@/components/home/HomeProductCategories";
 import { FinalCTA } from "@/components/home/FinalCTA";
 
 export default function HomePage() {
@@ -10,7 +10,7 @@ export default function HomePage() {
       <HeroSection />
       <CompanyIntroduction />
       <BusinessDivisions />
-      <ProductCategories />
+      <HomeProductCategories />
       <FinalCTA />
     </>
   );

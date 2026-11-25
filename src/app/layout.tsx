@@ -16,7 +16,11 @@ const manrope = Manrope({
 
 export const metadata: Metadata = buildMetadata();
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="en"

@@ -35,9 +35,10 @@ export default function AboutPage() {
             </p>
             <p>
               From point-of-sale environments and business technology products to
-              Microsoft Dynamics 365 Business Central explorations, cybersecurity
-              and advisory services, our approach is practical, enquiry-driven
-              and focused on sustainable business outcomes.
+              Microsoft Dynamics 365 Business Central, electronic labels,
+              cybersecurity, business intelligence and advisory services, our
+              approach is practical, enquiry-driven and focused on sustainable
+              business outcomes.
             </p>
             <p>
               We do not claim unverified partnerships, awards or customer

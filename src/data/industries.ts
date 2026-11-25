@@ -14,7 +14,7 @@ export const industries: IndustryItem[] = [
     image: "/images/divisions/business-systems-photo.png",
     imageAlt: "Retail and supermarket technology environment",
     relatedProducts: ["pos-machines", "cash-drawers", "scanners", "printers"],
-    relatedSystems: ["retail-pos"],
+    relatedSystems: ["retail-pos", "electronic-label-solution"],
     relatedSolutions: ["networking", "antivirus"],
     relatedConsulting: ["retail-consulting", "business-analytics"],
   },

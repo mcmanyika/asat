@@ -4,6 +4,7 @@ import { QuoteForm } from "@/components/forms/QuoteForm";
 import { DemoForm } from "@/components/forms/DemoForm";
 import { ConsultationForm } from "@/components/forms/ConsultationForm";
 import { parseEnquirySearchParams } from "@/lib/enquiry-params";
+import { isEnquiryBackendReady } from "@/lib/supabase/config";
 import type { EnquiryFormType, InterestArea } from "@/types";
 
 type SearchParamsPromise = Promise<{
@@ -41,15 +42,24 @@ async function EnquiryFormInner({
     params.interest === "general" && fallbackInterest
       ? fallbackInterest
       : params.interest;
+  const backendReady = isEnquiryBackendReady();
 
   if (type === "quote") {
     return (
-      <QuoteForm defaultInterest={interest} defaultSubject={params.subject} />
+      <QuoteForm
+        defaultInterest={interest}
+        defaultSubject={params.subject}
+        backendReady={backendReady}
+      />
     );
   }
   if (type === "demo") {
     return (
-      <DemoForm defaultInterest={interest} defaultSubject={params.subject} />
+      <DemoForm
+        defaultInterest={interest}
+        defaultSubject={params.subject}
+        backendReady={backendReady}
+      />
     );
   }
   if (type === "consultation") {
@@ -57,11 +67,16 @@ async function EnquiryFormInner({
       <ConsultationForm
         defaultInterest={interest}
         defaultSubject={params.subject}
+        backendReady={backendReady}
       />
     );
   }
   return (
-    <ContactForm defaultInterest={interest} defaultSubject={params.subject} />
+    <ContactForm
+      defaultInterest={interest}
+      defaultSubject={params.subject}
+      backendReady={backendReady}
+    />
   );
 }
 

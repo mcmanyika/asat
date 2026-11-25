@@ -1,5 +1,5 @@
-import { CatalogGrid } from "@/components/shared/CatalogGrid";
-import { solutions } from "@/data/solutions";
+import { CatalogPage } from "@/components/shared/CatalogPage";
+import { getSolutions } from "@/lib/content/queries";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -11,14 +11,14 @@ export const metadata = buildMetadata({
 
 export default function SolutionsPage() {
   return (
-    <CatalogGrid
+    <CatalogPage
       title="IT Solutions"
       description="Secure, reliable and scalable IT infrastructure for modern organizations."
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "IT Solutions" },
       ]}
-      items={solutions}
+      loadItems={getSolutions}
     />
   );
 }

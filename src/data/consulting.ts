@@ -44,15 +44,18 @@ export const consultingServices: ConsultingItem[] = [
     category: "consulting",
     interest: "consulting",
     shortDescription:
-      "Analytics guidance to improve visibility into business performance.",
+      "Real-time dashboards, automated financial reporting and AI-powered analytics from a single source of truth.",
     description:
-      "Business analytics consulting helps organizations turn operational data into clearer decision support — from sales and inventory insights to broader performance reporting.",
+      "We build real-time dashboards, automated financial reporting and AI-powered analytics that turn scattered spreadsheets and disconnected systems into a single source of executive truth — updated by the minute, not the month-end. Direct connections to ERPs, POS systems and accounting platforms (including Microsoft Dynamics 365 Business Central) via ODBC/API support scheduled and near-real-time incremental syncs with audit logging. A modelled warehouse moves data through staging, reporting and analytics layers instead of ad-hoc exports, with data quality checks and anomaly flags built into the pipeline itself.",
     image: "/images/divisions/consulting-photo.png",
     imageAlt: "Business analytics and performance reporting",
     highlights: [
-      "Performance visibility",
-      "Operational insight support",
-      "Decision-oriented reporting",
+      "Real-time dashboards and automated financial reporting",
+      "AI-powered analytics for executive decision support",
+      "Direct ERP, POS and accounting connections via ODBC/API",
+      "Scheduled and near-real-time incremental syncs with audit logging",
+      "Modelled warehouse: staging → reporting → analytics",
+      "Data quality checks and anomaly flags in the pipeline",
     ],
   },
 ];
