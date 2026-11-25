@@ -33,7 +33,7 @@ async function EnquiryDetail({
             {formatLabel(enquiry.type)} · {formatDateTime(enquiry.created_at)}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <StatusBadge status={enquiry.status} />
           <StatusSelect
             id={enquiry.id}
@@ -45,6 +45,12 @@ async function EnquiryDetail({
               { value: "closed", label: "Closed" },
             ]}
           />
+          <Link
+            href={`/admin/invoices/new?enquiryId=${enquiry.id}&name=${encodeURIComponent(enquiry.full_name)}&email=${encodeURIComponent(enquiry.email)}&company=${encodeURIComponent(enquiry.company_name)}&phone=${encodeURIComponent(enquiry.telephone)}`}
+            className="inline-flex items-center justify-center border border-border px-3 py-1.5 text-sm font-semibold text-primary-text transition hover:bg-light-bg"
+          >
+            Create invoice
+          </Link>
         </div>
       </div>
 

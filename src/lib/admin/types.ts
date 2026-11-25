@@ -49,6 +49,51 @@ export type StaffProfileRow = {
   created_at: string;
 };
 
+export type InvoiceStatus = "draft" | "sent" | "paid" | "void";
+
+export type InvoiceItemRow = {
+  id: string;
+  invoice_id: string;
+  description: string;
+  quantity: number;
+  unit_price: number;
+  line_total: number;
+  sort_order: number;
+};
+
+export type InvoiceRow = {
+  id: string;
+  number: string;
+  status: InvoiceStatus;
+  customer_name: string;
+  customer_email: string;
+  customer_company: string | null;
+  customer_phone: string | null;
+  customer_address: string | null;
+  issue_date: string;
+  due_date: string | null;
+  currency: string;
+  tax_rate: number;
+  notes: string | null;
+  enquiry_id: string | null;
+  subtotal: number;
+  tax_amount: number;
+  total: number;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type InvoiceWithItems = InvoiceRow & {
+  items: InvoiceItemRow[];
+};
+
+export type InvoiceItemInput = {
+  description: string;
+  quantity: number;
+  unit_price: number;
+};
+
 export type DashboardStats = {
   enquiriesTotal: number;
   enquiriesNew: number;

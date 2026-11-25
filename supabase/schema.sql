@@ -122,3 +122,5 @@ comment on table public.feedback is
 -- Run supabase/landing-sections.sql
 -- Superuser role (Settings access):
 -- Run supabase/staff-superuser.sql
+-- Invoicing module:
+-- Run supabase/invoices.sql

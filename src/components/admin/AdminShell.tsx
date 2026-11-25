@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  FileText,
   LayoutDashboard,
   LogOut,
   MessageSquareText,
@@ -18,6 +19,7 @@ import { cn } from "@/lib/utils";
 const baseNav = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/enquiries", label: "Enquiries", icon: Inbox },
+  { href: "/admin/invoices", label: "Invoices", icon: FileText },
   { href: "/admin/feedback", label: "Feedback", icon: MessageSquareText },
   { href: "/admin/staff", label: "Staff", icon: Users },
 ] as const;
