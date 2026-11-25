@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { Suspense } from "react";
+import { AdminFilterForm } from "@/components/admin/AdminFilterForm";
+import { AdminPageSkeleton } from "@/components/admin/AdminBusy";
 import { EnquiriesTable } from "@/components/admin/EnquiriesTable";
-import { listEnquiries } from "@/lib/admin/queries";
+import { getEnquiryById, listEnquiries } from "@/lib/admin/queries";
 import { interestLabels } from "@/lib/validations/enquiry";
 
 type SearchParams = Promise<{
@@ -11,6 +12,7 @@ type SearchParams = Promise<{
   source?: string;
   interest?: string;
   sort?: string;
+  open?: string;
 }>;
 
 async function EnquiriesContent({
@@ -19,14 +21,17 @@ async function EnquiriesContent({
   searchParams: SearchParams;
 }) {
   const filters = await searchParams;
-  const enquiries = await listEnquiries({
-    q: filters.q,
-    status: filters.status,
-    type: filters.type,
-    source: filters.source,
-    interest: filters.interest,
-    sort: filters.sort,
-  });
+  const [enquiries, opened] = await Promise.all([
+    listEnquiries({
+      q: filters.q,
+      status: filters.status,
+      type: filters.type,
+      source: filters.source,
+      interest: filters.interest,
+      sort: filters.sort,
+    }),
+    filters.open ? getEnquiryById(filters.open) : Promise.resolve(null),
+  ]);
 
   const hasFilters = Boolean(
     filters.q ||
@@ -46,10 +51,7 @@ async function EnquiriesContent({
         </p>
       </div>
 
-      <form
-        method="get"
-        className="flex flex-wrap items-end gap-3 border border-border bg-white p-4 shadow-sm"
-      >
+      <AdminFilterForm resetHref="/admin/enquiries" showReset={hasFilters}>
         <label className="min-w-[12rem] flex-1 space-y-1">
           <span className="text-xs font-medium text-secondary-text">Search</span>
           <input
@@ -132,21 +134,7 @@ async function EnquiriesContent({
             <option value="status">Status</option>
           </select>
         </label>
-        <button
-          type="submit"
-          className="bg-navy px-4 py-2 text-sm font-semibold text-white"
-        >
-          Apply
-        </button>
-        {hasFilters ? (
-          <Link
-            href="/admin/enquiries"
-            className="px-3 py-2 text-sm text-secondary-text hover:text-primary-text"
-          >
-            Reset
-          </Link>
-        ) : null}
-      </form>
+      </AdminFilterForm>
 
       <p className="text-sm text-secondary-text">
         {enquiries.length}{" "}
@@ -154,7 +142,7 @@ async function EnquiriesContent({
         {hasFilters ? " matching filters" : ""}
       </p>
 
-      <EnquiriesTable enquiries={enquiries} />
+      <EnquiriesTable enquiries={enquiries} initialOpen={opened} />
     </div>
   );
 }
@@ -165,14 +153,7 @@ export default function AdminEnquiriesPage({
   searchParams: SearchParams;
 }) {
   return (
-    <Suspense
-      fallback={
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 w-40 bg-slate-200" />
-          <div className="h-48 bg-slate-100" />
-        </div>
-      }
-    >
+    <Suspense fallback={<AdminPageSkeleton />}>
       <EnquiriesContent searchParams={searchParams} />
     </Suspense>
   );

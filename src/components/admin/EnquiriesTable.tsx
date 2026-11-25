@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { EnquiryDetailModal } from "@/components/admin/EnquiryDetailModal";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { StatusSelect } from "@/components/admin/StatusSelect";
@@ -8,8 +9,33 @@ import { updateEnquiryStatus } from "@/lib/admin/actions";
 import { formatDateTime, formatLabel } from "@/lib/admin/format";
 import type { EnquiryRow } from "@/lib/admin/types";
 
-export function EnquiriesTable({ enquiries }: { enquiries: EnquiryRow[] }) {
-  const [selected, setSelected] = useState<EnquiryRow | null>(null);
+export function EnquiriesTable({
+  enquiries,
+  initialOpen,
+}: {
+  enquiries: EnquiryRow[];
+  initialOpen?: EnquiryRow | null;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [selected, setSelected] = useState<EnquiryRow | null>(
+    initialOpen || null,
+  );
+
+  useEffect(() => {
+    if (!initialOpen) return;
+    setSelected(initialOpen);
+  }, [initialOpen]);
+
+  function closeModal() {
+    setSelected(null);
+    if (!searchParams.get("open")) return;
+    const next = new URLSearchParams(searchParams.toString());
+    next.delete("open");
+    const query = next.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname);
+  }
 
   return (
     <>
@@ -81,10 +107,7 @@ export function EnquiriesTable({ enquiries }: { enquiries: EnquiryRow[] }) {
       </div>
 
       {selected ? (
-        <EnquiryDetailModal
-          enquiry={selected}
-          onClose={() => setSelected(null)}
-        />
+        <EnquiryDetailModal enquiry={selected} onClose={closeModal} />
       ) : null}
     </>
   );

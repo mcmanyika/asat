@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { AdminFilterForm } from "@/components/admin/AdminFilterForm";
+import { AdminPageSkeleton } from "@/components/admin/AdminBusy";
 import { InvoicesTable } from "@/components/admin/InvoicesTable";
-import { listInvoices } from "@/lib/admin/invoices";
+import { getInvoiceById, listInvoices } from "@/lib/admin/invoices";
 
 type SearchParams = Promise<{
   q?: string;
   status?: string;
   sort?: string;
+  open?: string;
 }>;
 
 async function InvoicesContent({
@@ -15,11 +18,14 @@ async function InvoicesContent({
   searchParams: SearchParams;
 }) {
   const filters = await searchParams;
-  const invoices = await listInvoices({
-    q: filters.q,
-    status: filters.status,
-    sort: filters.sort,
-  });
+  const [invoices, opened] = await Promise.all([
+    listInvoices({
+      q: filters.q,
+      status: filters.status,
+      sort: filters.sort,
+    }),
+    filters.open ? getInvoiceById(filters.open) : Promise.resolve(null),
+  ]);
 
   const hasFilters = Boolean(
     filters.q ||
@@ -33,7 +39,8 @@ async function InvoicesContent({
         <div>
           <h1 className="text-2xl font-bold text-primary-text">Invoices</h1>
           <p className="mt-1 text-sm text-secondary-text">
-            Create, send and track customer invoices.
+            Create, send and track customer invoices. Click a row for a quick
+            preview; open the full form to edit line items.
           </p>
         </div>
         <Link
@@ -44,10 +51,7 @@ async function InvoicesContent({
         </Link>
       </div>
 
-      <form
-        method="get"
-        className="flex flex-wrap items-end gap-3 border border-border bg-white p-4 shadow-sm"
-      >
+      <AdminFilterForm resetHref="/admin/invoices" showReset={hasFilters}>
         <label className="min-w-[12rem] flex-1 space-y-1">
           <span className="text-xs font-medium text-secondary-text">Search</span>
           <input
@@ -92,21 +96,7 @@ async function InvoicesContent({
             <option value="status">Status</option>
           </select>
         </label>
-        <button
-          type="submit"
-          className="bg-navy px-4 py-2 text-sm font-semibold text-white"
-        >
-          Apply
-        </button>
-        {hasFilters ? (
-          <Link
-            href="/admin/invoices"
-            className="px-3 py-2 text-sm text-secondary-text hover:text-primary-text"
-          >
-            Reset
-          </Link>
-        ) : null}
-      </form>
+      </AdminFilterForm>
 
       <p className="text-sm text-secondary-text">
         {invoices.length}{" "}
@@ -114,7 +104,7 @@ async function InvoicesContent({
         {hasFilters ? " matching filters" : ""}
       </p>
 
-      <InvoicesTable invoices={invoices} />
+      <InvoicesTable invoices={invoices} initialOpen={opened} />
     </div>
   );
 }
@@ -125,14 +115,7 @@ export default function AdminInvoicesPage({
   searchParams: SearchParams;
 }) {
   return (
-    <Suspense
-      fallback={
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 w-40 bg-slate-200" />
-          <div className="h-48 bg-slate-100" />
-        </div>
-      }
-    >
+    <Suspense fallback={<AdminPageSkeleton />}>
       <InvoicesContent searchParams={searchParams} />
     </Suspense>
   );

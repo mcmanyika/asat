@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { Suspense } from "react";
+import { AdminFilterForm } from "@/components/admin/AdminFilterForm";
+import { AdminPageSkeleton } from "@/components/admin/AdminBusy";
 import { StaffTable } from "@/components/admin/StaffTable";
 import { listStaffProfiles } from "@/lib/admin/queries";
 
@@ -42,10 +43,7 @@ async function StaffContent({
         </p>
       </div>
 
-      <form
-        method="get"
-        className="flex flex-wrap items-end gap-3 border border-border bg-white p-4 shadow-sm"
-      >
+      <AdminFilterForm resetHref="/admin/staff" showReset={hasFilters}>
         <label className="min-w-[12rem] flex-1 space-y-1">
           <span className="text-xs font-medium text-secondary-text">Search</span>
           <input
@@ -97,21 +95,7 @@ async function StaffContent({
             <option value="status">Status</option>
           </select>
         </label>
-        <button
-          type="submit"
-          className="bg-navy px-4 py-2 text-sm font-semibold text-white"
-        >
-          Apply
-        </button>
-        {hasFilters ? (
-          <Link
-            href="/admin/staff"
-            className="px-3 py-2 text-sm text-secondary-text hover:text-primary-text"
-          >
-            Reset
-          </Link>
-        ) : null}
-      </form>
+      </AdminFilterForm>
 
       <p className="text-sm text-secondary-text">
         {staff.length} {staff.length === 1 ? "profile" : "profiles"}
@@ -129,14 +113,7 @@ export default function AdminStaffPage({
   searchParams: SearchParams;
 }) {
   return (
-    <Suspense
-      fallback={
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 w-40 bg-slate-200" />
-          <div className="h-48 bg-slate-100" />
-        </div>
-      }
-    >
+    <Suspense fallback={<AdminPageSkeleton />}>
       <StaffContent searchParams={searchParams} />
     </Suspense>
   );

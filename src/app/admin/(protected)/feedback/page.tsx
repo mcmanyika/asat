@@ -1,10 +1,8 @@
-import Link from "next/link";
 import { Suspense } from "react";
-import { StatusBadge } from "@/components/admin/StatusBadge";
-import { StatusSelect } from "@/components/admin/StatusSelect";
-import { updateFeedbackStatus } from "@/lib/admin/actions";
-import { listFeedback } from "@/lib/admin/queries";
-import { formatDateTime, formatLabel } from "@/lib/admin/format";
+import { AdminFilterForm } from "@/components/admin/AdminFilterForm";
+import { AdminPageSkeleton } from "@/components/admin/AdminBusy";
+import { FeedbackTable } from "@/components/admin/FeedbackTable";
+import { getFeedbackById, listFeedback } from "@/lib/admin/queries";
 
 type SearchParams = Promise<{
   q?: string;
@@ -12,6 +10,7 @@ type SearchParams = Promise<{
   category?: string;
   rating?: string;
   sort?: string;
+  open?: string;
 }>;
 
 async function FeedbackContent({
@@ -20,13 +19,16 @@ async function FeedbackContent({
   searchParams: SearchParams;
 }) {
   const filters = await searchParams;
-  const feedback = await listFeedback({
-    q: filters.q,
-    status: filters.status,
-    category: filters.category,
-    rating: filters.rating,
-    sort: filters.sort,
-  });
+  const [feedback, opened] = await Promise.all([
+    listFeedback({
+      q: filters.q,
+      status: filters.status,
+      category: filters.category,
+      rating: filters.rating,
+      sort: filters.sort,
+    }),
+    filters.open ? getFeedbackById(filters.open) : Promise.resolve(null),
+  ]);
 
   const hasFilters = Boolean(
     filters.q ||
@@ -45,10 +47,7 @@ async function FeedbackContent({
         </p>
       </div>
 
-      <form
-        method="get"
-        className="flex flex-wrap items-end gap-3 border border-border bg-white p-4 shadow-sm"
-      >
+      <AdminFilterForm resetHref="/admin/feedback" showReset={hasFilters}>
         <label className="min-w-[12rem] flex-1 space-y-1">
           <span className="text-xs font-medium text-secondary-text">Search</span>
           <input
@@ -120,21 +119,7 @@ async function FeedbackContent({
             <option value="status">Status</option>
           </select>
         </label>
-        <button
-          type="submit"
-          className="bg-navy px-4 py-2 text-sm font-semibold text-white"
-        >
-          Apply
-        </button>
-        {hasFilters ? (
-          <Link
-            href="/admin/feedback"
-            className="px-3 py-2 text-sm text-secondary-text hover:text-primary-text"
-          >
-            Reset
-          </Link>
-        ) : null}
-      </form>
+      </AdminFilterForm>
 
       <p className="text-sm text-secondary-text">
         {feedback.length}{" "}
@@ -142,75 +127,7 @@ async function FeedbackContent({
         {hasFilters ? " matching filters" : ""}
       </p>
 
-      <div className="overflow-x-auto border border-border bg-white shadow-sm">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-border bg-light-bg text-xs tracking-wide text-secondary-text uppercase">
-            <tr>
-              <th className="px-4 py-3 font-semibold">Visitor</th>
-              <th className="px-4 py-3 font-semibold">Category</th>
-              <th className="px-4 py-3 font-semibold">Rating</th>
-              <th className="px-4 py-3 font-semibold">Message</th>
-              <th className="px-4 py-3 font-semibold">Received</th>
-              <th className="px-4 py-3 font-semibold">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {feedback.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-8 text-center text-secondary-text"
-                >
-                  No feedback match these filters.
-                </td>
-              </tr>
-            ) : (
-              feedback.map((item) => (
-                <tr key={item.id} className="align-top hover:bg-light-bg/70">
-                  <td className="px-4 py-3">
-                    <Link
-                      href={`/admin/feedback/${item.id}`}
-                      className="font-medium text-primary-text hover:underline"
-                    >
-                      {item.full_name || "Anonymous"}
-                    </Link>
-                    {item.email ? (
-                      <p className="text-xs text-secondary-text">{item.email}</p>
-                    ) : null}
-                  </td>
-                  <td className="px-4 py-3">{formatLabel(item.category)}</td>
-                  <td className="px-4 py-3">
-                    {item.rating ? `${item.rating}/5` : "—"}
-                  </td>
-                  <td className="max-w-sm px-4 py-3">
-                    <p className="line-clamp-2 text-secondary-text">
-                      {item.message}
-                    </p>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    {formatDateTime(item.created_at)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-col gap-2">
-                      <StatusBadge status={item.status} />
-                      <StatusSelect
-                        id={item.id}
-                        status={item.status}
-                        action={updateFeedbackStatus}
-                        options={[
-                          { value: "new", label: "New" },
-                          { value: "reviewed", label: "Reviewed" },
-                          { value: "closed", label: "Closed" },
-                        ]}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <FeedbackTable feedback={feedback} initialOpen={opened} />
     </div>
   );
 }
@@ -221,14 +138,7 @@ export default function AdminFeedbackPage({
   searchParams: SearchParams;
 }) {
   return (
-    <Suspense
-      fallback={
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 w-40 bg-slate-200" />
-          <div className="h-48 bg-slate-100" />
-        </div>
-      }
-    >
+    <Suspense fallback={<AdminPageSkeleton />}>
       <FeedbackContent searchParams={searchParams} />
     </Suspense>
   );
