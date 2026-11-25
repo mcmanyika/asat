@@ -11,6 +11,7 @@ type SpeedometerGaugeProps = {
   /** navy | gold | cyan | emerald */
   tone?: "navy" | "gold" | "cyan" | "emerald";
   className?: string;
+  onClick?: () => void;
 };
 
 const toneStroke: Record<NonNullable<SpeedometerGaugeProps["tone"]>, string> = {
@@ -53,6 +54,7 @@ export function SpeedometerGauge({
   displayValue,
   tone = "navy",
   className,
+  onClick,
 }: SpeedometerGaugeProps) {
   const safeMax = max > 0 ? max : 1;
   const ratio = clamp(value / safeMax, 0, 1);
@@ -66,13 +68,8 @@ export function SpeedometerGauge({
   const needle = polar(cx, cy, radius - 10, valueAngle);
   const shown = displayValue ?? value;
 
-  return (
-    <div
-      className={cn(
-        "flex flex-col items-center border border-border bg-white p-4 shadow-sm",
-        className,
-      )}
-    >
+  const content = (
+    <>
       <p className="self-start text-xs font-semibold tracking-wide text-secondary-text uppercase">
         {label}
       </p>
@@ -119,6 +116,32 @@ export function SpeedometerGauge({
       {hint ? (
         <p className="mt-1 text-center text-xs text-secondary-text">{hint}</p>
       ) : null}
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={cn(
+          "flex cursor-pointer flex-col items-center border border-border bg-white p-4 text-left shadow-sm transition hover:border-gold/60 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold",
+          className,
+        )}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center border border-border bg-white p-4 shadow-sm",
+        className,
+      )}
+    >
+      {content}
     </div>
   );
 }

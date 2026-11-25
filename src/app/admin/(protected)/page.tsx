@@ -1,10 +1,8 @@
 import { Suspense } from "react";
 import { AdminFilterForm } from "@/components/admin/AdminFilterForm";
 import { AdminPageSkeleton } from "@/components/admin/AdminBusy";
-import { BreakdownList } from "@/components/admin/BreakdownList";
 import { OverviewActivity } from "@/components/admin/OverviewActivity";
-import { SpeedometerGauge } from "@/components/admin/SpeedometerGauge";
-import { StatCard } from "@/components/admin/StatCard";
+import { OverviewCards } from "@/components/admin/OverviewCards";
 import {
   getDashboardStats,
   listEnquiries,
@@ -77,10 +75,6 @@ async function OverviewContent({
     );
   }
 
-  const enquiryWorkload =
-    stats.enquiriesNew + stats.enquiriesInProgress + stats.enquiriesClosed;
-  const openEnquiries = stats.enquiriesNew + stats.enquiriesInProgress;
-
   const hasFilters = Boolean(
     filters.q ||
       filters.status ||
@@ -117,74 +111,7 @@ async function OverviewContent({
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <SpeedometerGauge
-          label="New enquiries"
-          value={stats.enquiriesNew}
-          max={Math.max(stats.enquiriesTotal, 1)}
-          hint={`${stats.enquiriesNew} of ${stats.enquiriesTotal} total`}
-          tone="gold"
-        />
-        <SpeedometerGauge
-          label="Open workload"
-          value={openEnquiries}
-          max={Math.max(enquiryWorkload, 1)}
-          displayValue={openEnquiries}
-          hint={`${stats.enquiriesInProgress} in progress · ${stats.enquiriesClosed} closed`}
-          tone="cyan"
-        />
-        <SpeedometerGauge
-          label="New feedback"
-          value={stats.feedbackNew}
-          max={Math.max(stats.feedbackTotal, 1)}
-          hint={`${stats.feedbackNew} of ${stats.feedbackTotal} total`}
-          tone="navy"
-        />
-        <SpeedometerGauge
-          label="Avg rating"
-          value={stats.feedbackAvgRating ?? 0}
-          max={5}
-          displayValue={
-            stats.feedbackAvgRating != null
-              ? stats.feedbackAvgRating.toFixed(1)
-              : "—"
-          }
-          hint="Out of 5 from rated feedback"
-          tone="emerald"
-        />
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          label="Enquiries"
-          value={stats.enquiriesTotal}
-          hint={`${stats.enquiriesNew} new`}
-        />
-        <StatCard
-          label="In progress"
-          value={stats.enquiriesInProgress}
-          hint={`${stats.enquiriesClosed} closed`}
-        />
-        <StatCard
-          label="Feedback"
-          value={stats.feedbackTotal}
-          hint={`${stats.feedbackNew} new`}
-        />
-        <StatCard
-          label="Avg rating"
-          value={stats.feedbackAvgRating ?? "—"}
-          hint="From rated feedback"
-        />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-3">
-        <BreakdownList title="By enquiry type" items={stats.enquiriesByType} />
-        <BreakdownList
-          title="By interest area"
-          items={stats.enquiriesByInterest}
-        />
-        <BreakdownList title="By source" items={stats.enquiriesBySource} />
-      </div>
+      <OverviewCards stats={stats} />
 
       <AdminFilterForm resetHref="/admin" showReset={hasFilters}>
         <label className="min-w-[12rem] flex-1 space-y-1">

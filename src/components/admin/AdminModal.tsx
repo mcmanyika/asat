@@ -13,6 +13,8 @@ type AdminModalProps = {
   footer?: ReactNode;
   size?: "md" | "lg" | "xl";
   labelledBy?: string;
+  /** Raise above another open admin modal */
+  stacked?: boolean;
 };
 
 const sizeClass = {
@@ -30,6 +32,7 @@ export function AdminModal({
   footer,
   size = "lg",
   labelledBy = "admin-modal-title",
+  stacked = false,
 }: AdminModalProps) {
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -48,7 +51,10 @@ export function AdminModal({
 
   return (
     <div
-      className="fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-navy/50 p-4 sm:p-6"
+      className={cn(
+        "fixed inset-0 flex items-start justify-center overflow-y-auto bg-navy/50 p-4 sm:p-6",
+        stacked ? "z-[140]" : "z-[120]",
+      )}
       onClick={onClose}
       role="presentation"
     >

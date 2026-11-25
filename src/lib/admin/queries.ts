@@ -76,6 +76,8 @@ export async function getDashboardStats(): Promise<DashboardStats | null> {
     ),
     recentEnquiries: enquiries.slice(0, 8),
     recentFeedback: feedback.slice(0, 8),
+    allEnquiries: enquiries,
+    allFeedback: feedback,
   };
 }
 

@@ -107,4 +107,6 @@ export type DashboardStats = {
   enquiriesByInterest: { label: string; count: number }[];
   recentEnquiries: EnquiryRow[];
   recentFeedback: FeedbackRow[];
+  allEnquiries: EnquiryRow[];
+  allFeedback: FeedbackRow[];
 };

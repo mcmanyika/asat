@@ -24,6 +24,7 @@ export function FeedbackDetailModal({
       onClose={onClose}
       size="lg"
       labelledBy="feedback-modal-title"
+      stacked
     >
       <div className="grid gap-5 lg:grid-cols-3">
         <section className="lg:col-span-1">

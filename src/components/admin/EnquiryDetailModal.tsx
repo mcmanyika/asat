@@ -27,6 +27,7 @@ export function EnquiryDetailModal({
       onClose={onClose}
       size="lg"
       labelledBy="enquiry-modal-title"
+      stacked
       footer={
         <div className="flex flex-wrap gap-3">
           <Link
