@@ -7,6 +7,7 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { useRef } from "react";
 import { Container } from "@/components/shared/Container";
 import { ButtonLink } from "@/components/shared/ButtonLink";
@@ -37,10 +38,19 @@ export function HeroSection() {
     reduceMotion ? [1, 1] : [1, 0.55],
   );
 
+  function scrollToNextSection() {
+    const next = sectionRef.current?.nextElementSibling;
+    if (next instanceof HTMLElement) {
+      next.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    window.scrollBy({ top: window.innerHeight * 0.85, behavior: "smooth" });
+  }
+
   return (
     <section
       ref={sectionRef}
-      className="relative isolate min-h-[560px] overflow-hidden bg-navy text-white md:min-h-[620px] lg:min-h-[680px]"
+      className="relative isolate min-h-[calc(100dvh-var(--header-offset,112px))] overflow-hidden bg-navy text-white"
     >
       <motion.div
         style={{ y: imageY }}
@@ -67,7 +77,7 @@ export function HeroSection() {
         aria-hidden
       />
 
-      <Container className="relative z-10 flex min-h-[560px] items-center py-16 md:min-h-[620px] lg:min-h-[680px]">
+      <Container className="relative z-10 flex min-h-[calc(100dvh-var(--header-offset,112px))] items-center py-16">
         <motion.div
           style={{ y: contentY, opacity: contentOpacity }}
           className="max-w-xl will-change-transform"
@@ -101,6 +111,28 @@ export function HeroSection() {
           </motion.div>
         </motion.div>
       </Container>
+
+      <motion.button
+        type="button"
+        onClick={scrollToNextSection}
+        aria-label="Scroll to next section"
+        className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 cursor-pointer flex-col items-center gap-1 text-white/85 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/70 md:bottom-8"
+        animate={reduceMotion ? undefined : { y: [0, 10, 0] }}
+        transition={
+          reduceMotion
+            ? undefined
+            : {
+                duration: 1.6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }
+        }
+      >
+        <span className="text-[0.65rem] font-semibold tracking-[0.22em] uppercase">
+          Scroll
+        </span>
+        <ChevronDown className="size-7 stroke-[1.75]" aria-hidden />
+      </motion.button>
     </section>
   );
 }

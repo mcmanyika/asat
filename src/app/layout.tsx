@@ -1,10 +1,11 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { JsonLd } from "@/components/shared/JsonLd";
-import { siteConfig } from "@/config/site";
+import { getConfiguredContactFields, siteConfig } from "@/config/site";
 import { buildMetadata, organizationJsonLd } from "@/lib/seo";
 import "./globals.css";
 
@@ -21,11 +22,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const contact = getConfiguredContactFields();
+  const hasTopBar =
+    Boolean(contact.phone || contact.email || contact.businessHours) ||
+    Object.values(siteConfig.socialLinks).some((value) => value.trim());
+
   return (
     <html
       lang="en"
       data-scroll-behavior="smooth"
       className={`${manrope.variable} h-full antialiased`}
+      style={
+        {
+          "--header-offset": hasTopBar ? "112px" : "73px",
+        } as CSSProperties
+      }
     >
       <body className="flex min-h-full flex-col bg-white font-sans text-primary-text">
         <JsonLd data={organizationJsonLd()} />
