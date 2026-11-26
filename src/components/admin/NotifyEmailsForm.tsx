@@ -43,7 +43,7 @@ export function NotifyEmailsForm({
           name="emails"
           rows={6}
           defaultValue={initialValue}
-          placeholder={"info@asat-technologies.com\nsales@asat-technologies.com"}
+          placeholder={"info@asattechnologies.com\nsales@asattechnologies.com"}
           className="w-full rounded-[4px] border border-border px-3 py-2.5 font-mono text-sm outline-none focus:border-gold"
         />
       </div>

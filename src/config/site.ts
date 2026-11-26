@@ -9,9 +9,9 @@ export const siteConfig = {
   logo: "/images/logo/asat-logo.png",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://asat.example.com",
   contact: {
-    phone: "+263 77 238 4466" as string,
-    email: "info@asat-technologies.com" as string,
-    whatsapp: "+263772384466" as string,
+    phone: "+263 78 840 2515" as string,
+    email: "info@asattechnologies.com" as string,
+    whatsapp: "+263788402515" as string,
     address: "" as string,
     businessHours: "Mon - Fri: 8:00 AM - 5:00 PM" as string,
   },
